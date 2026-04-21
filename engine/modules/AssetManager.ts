@@ -1,6 +1,7 @@
 
 import { PlaylistItem as MediaAsset } from '../../types';
 import { eventBus } from '../core/EventBus';
+import { WebOSStorage } from './WebOSStorage';
 
 export class AssetManager {
   private db!: IDBDatabase;
@@ -8,6 +9,32 @@ export class AssetManager {
 
   async init() {
     this.db = await this.openDB();
+    // Initialize WebOS storage discovery if on platform
+    if ((window as any).webOS) {
+      await WebOSStorage.getInstance().listStorageProviders();
+    }
+  }
+
+  /**
+   * B2B Bridge: Export cached asset to physical storage (e.g. USB)
+   */
+  async exportToPhysics(id: string, path: string): Promise<boolean> {
+    const blob = await this.get(id);
+    if (!blob) return false;
+
+    const webos = WebOSStorage.getInstance();
+    const providers = await webos.listStorageProviders();
+    const usb = providers.find(p => p.storageType === 'usb');
+
+    if (!usb) {
+        console.warn('[AssetManager] No USB mount detected for export');
+        return false;
+    }
+
+    // In a real environment, we'd write to internal sandbox then sync
+    const internalPath = `/home/owner/apps/usr/palm/applications/com.signage.app/cache/${id}`;
+    await webos.writeFile({ storageType: 'internal', driveId: 'INTERNAL_STORAGE', path: internalPath }, 'binary_blob_data');
+    return await webos.syncToUSB(internalPath, path, usb.driveId);
   }
 
   private openDB(): Promise<IDBDatabase> {

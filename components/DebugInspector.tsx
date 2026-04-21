@@ -22,14 +22,20 @@ import {
 } from 'lucide-react';
 import { GlowCard, StatusBadge } from './ui/Shared';
 
+import { WebOSStorage } from '../engine/modules/WebOSStorage';
+import { HardwareLogger } from '../engine/modules/HardwareLogger';
+import { WebOSStorageProvider } from '../types';
+
 interface DebugInspectorProps {
   onNavigate?: (view: ViewState) => void;
 }
 
 const DebugInspector: React.FC<DebugInspectorProps> = ({ onNavigate }) => {
   const [logs, setLogs] = useState<TelemetryEvent[]>([]);
+  const [physicalLogs, setPhysicalLogs] = useState<string>('');
   const [command, setCommand] = useState('');
-  
+  const [storageProviders, setStorageProviders] = useState<WebOSStorageProvider[]>([]);
+
   const tools = [
     { name: 'KERNEL_VIDEO_PROBE', url: 'https://ais-applet.com/debug/v1/video', status: 'online' },
     { name: 'MANIFEST_STRUCT_DIFF', url: 'https://ais-applet.com/debug/v1/playlist', status: 'attention' },
@@ -37,6 +43,17 @@ const DebugInspector: React.FC<DebugInspectorProps> = ({ onNavigate }) => {
   ];
 
   useEffect(() => {
+    // Discovery: Get hardware storage tiers
+    WebOSStorage.getInstance().listStorageProviders().then(setStorageProviders);
+    
+    // Initial physical log pull
+    HardwareLogger.getInstance().getLogs().then(l => setPhysicalLogs(l || 'NO_PHYS_DATA'));
+
+    // Polling interval for hardware log sync (simulating physical write feedback)
+    const interval = setInterval(() => {
+        HardwareLogger.getInstance().getLogs().then(l => setPhysicalLogs(l || 'NO_PHYS_DATA'));
+    }, 5000);
+
     // Generate some initial mock telemetry for debug vibes
     const mockEvents: TelemetryEvent[] = Array.from({ length: 10 }).map((_, i) => ({
       timestamp: new Date(Date.now() - i * 60000).toISOString(),
@@ -45,9 +62,14 @@ const DebugInspector: React.FC<DebugInspectorProps> = ({ onNavigate }) => {
       playerId: 'VIRTUAL-01'
     }));
     setLogs(mockEvents);
+
+    return () => clearInterval(interval);
   }, []);
 
-  const clearLogs = () => setLogs([]);
+  const clearLogs = () => {
+    setLogs([]);
+    HardwareLogger.getInstance().clearLogs().then(() => setPhysicalLogs('LOGS_PURGED'));
+  };
 
   const executeCommand = (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,6 +246,45 @@ const DebugInspector: React.FC<DebugInspectorProps> = ({ onNavigate }) => {
                 <p className="text-[10px] text-slate-500 font-mono leading-relaxed uppercase tracking-wider">
                     Administrative access detected. Kernel logs are being replicated to the cloud-vault for forensic audits. <span className="text-accent underline cursor-pointer">View Cipher Keys.</span>
                 </p>
+            </GlowCard>
+
+            <GlowCard className="p-8 border-white/5 bg-black/40">
+                <div className="flex items-center gap-3 text-primary mb-6">
+                    <Box className="w-5 h-5 shadow-glow-cyan" />
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em] italic">PLATFORM_RESOURCES</span>
+                </div>
+                <div className="space-y-4">
+                    {storageProviders.map(p => (
+                        <div key={p.driveId} className="p-4 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between group">
+                            <div className="space-y-1">
+                                <h4 className="text-[10px] font-black text-foreground uppercase italic group-hover:text-primary transition-colors">{p.label || p.driveId}</h4>
+                                <p className="text-[9px] font-mono text-slate-700 uppercase tracking-widest">{p.storageType} {"->"} {p.path}</p>
+                            </div>
+                            <StatusBadge status="online" className="text-[8px] bg-primary/10 border border-primary/20 text-primary">MOUNTED</StatusBadge>
+                        </div>
+                    ))}
+                    {storageProviders.length === 0 && (
+                        <div className="py-10 text-center text-slate-800 font-mono text-[9px] uppercase italic border border-dashed border-white/5 rounded-xl">
+                            No physical storage volumes identified.
+                        </div>
+                    )}
+                </div>
+            </GlowCard>
+
+            <GlowCard className="p-8 border-white/5 bg-white/5 flex flex-col gap-6">
+                <div className="flex items-center gap-3 text-slate-400">
+                    <Activity className="w-5 h-5" />
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em] italic">PHYSICAL_SESSION_LOG</span>
+                </div>
+                <div className="bg-black/80 rounded-2xl p-6 font-mono text-[10px] text-emerald-500/80 leading-relaxed border border-white/5 h-[300px] overflow-y-auto no-scrollbar">
+                    {physicalLogs.split('\n').map((line, i) => (
+                        <div key={i} className="py-0.5 whitespace-pre-wrap">{line}</div>
+                    ))}
+                </div>
+                <div className="flex justify-between items-center text-[8px] font-mono text-slate-700 uppercase tracking-widest italic">
+                    <span>Target: /logs/kernel.log</span>
+                    <span>Persistence: Virtual_Append</span>
+                </div>
             </GlowCard>
         </div>
       </div>

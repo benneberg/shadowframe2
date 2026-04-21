@@ -61,3 +61,16 @@ export interface TelemetryEvent {
 }
 
 export type ViewState = 'home' | 'media' | 'playlist' | 'templates' | 'devices' | 'debug' | 'provision' | 'player' | 'help';
+
+export interface WebOSStorageProvider {
+  driveId: string;
+  storageType: 'internal' | 'usb' | 'sdcard' | 'network';
+  path: string;
+  label?: string;
+}
+
+export interface WebOSFileRequest {
+  storageType: string;
+  driveId: string;
+  path: string;
+}
