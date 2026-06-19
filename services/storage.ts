@@ -1,5 +1,5 @@
 
-import { Media, Template, Playlist, Device, PlayerConfig, TelemetryEvent } from '../types';
+import { Media, Template, Playlist, Device, PlayerConfig, TelemetryEvent, User } from '../types';
 
 const KEYS = {
   MEDIA: 'signage_media',
@@ -7,7 +7,8 @@ const KEYS = {
   PLAYLISTS: 'signage_playlists',
   DEVICES: 'signage_devices',
   CONFIGS: 'signage_configs',
-  TELEMETRY: 'signage_telemetry'
+  TELEMETRY: 'signage_telemetry',
+  USER: 'signage_user'
 };
 
 const DEFAULT_TEMPLATES: Template[] = [
@@ -87,5 +88,16 @@ export const storage = {
     logs.unshift(event);
     localStorage.setItem(KEYS.TELEMETRY, JSON.stringify(logs.slice(0, 500)));
   },
-  clearTelemetry: () => localStorage.removeItem(KEYS.TELEMETRY)
+  clearTelemetry: () => localStorage.removeItem(KEYS.TELEMETRY),
+
+  getUser: (): User => {
+    const data = localStorage.getItem(KEYS.USER);
+    if (data) return JSON.parse(data);
+    return {
+      username: 'benneberg',
+      email: 'benneberg@gmail.com',
+      createdAt: new Date().toISOString()
+    } as User;
+  },
+  saveUser: (user: User) => localStorage.setItem(KEYS.USER, JSON.stringify(user))
 };

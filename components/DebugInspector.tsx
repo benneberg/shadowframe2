@@ -23,7 +23,7 @@ import {
 import { GlowCard, StatusBadge } from './ui/Shared';
 
 import { WebOSStorage } from '../engine/modules/WebOSStorage';
-import { HardwareLogger } from '../engine/modules/HardwareLogger';
+import { HardwareLoggingModule } from '../engine/modules/HardwareLoggingModule';
 import { WebOSStorageProvider } from '../types';
 
 interface DebugInspectorProps {
@@ -47,11 +47,11 @@ const DebugInspector: React.FC<DebugInspectorProps> = ({ onNavigate }) => {
     WebOSStorage.getInstance().listStorageProviders().then(setStorageProviders);
     
     // Initial physical log pull
-    HardwareLogger.getInstance().getLogs().then(l => setPhysicalLogs(l || 'NO_PHYS_DATA'));
+    HardwareLoggingModule.getInstance().getLogs().then(l => setPhysicalLogs(l || 'NO_PHYS_DATA'));
 
     // Polling interval for hardware log sync (simulating physical write feedback)
     const interval = setInterval(() => {
-        HardwareLogger.getInstance().getLogs().then(l => setPhysicalLogs(l || 'NO_PHYS_DATA'));
+        HardwareLoggingModule.getInstance().getLogs().then(l => setPhysicalLogs(l || 'NO_PHYS_DATA'));
     }, 5000);
 
     // Generate some initial mock telemetry for debug vibes
@@ -68,7 +68,7 @@ const DebugInspector: React.FC<DebugInspectorProps> = ({ onNavigate }) => {
 
   const clearLogs = () => {
     setLogs([]);
-    HardwareLogger.getInstance().clearLogs().then(() => setPhysicalLogs('LOGS_PURGED'));
+    HardwareLoggingModule.getInstance().purge().then(() => setPhysicalLogs('LOGS_PURGED'));
   };
 
   const executeCommand = (e: React.FormEvent) => {

@@ -44,6 +44,17 @@ export interface Device {
   ipAddress: string;
   lastSeen: string;
   status: 'online' | 'attention' | 'offline';
+  location?: { lat: number; lng: number };
+  latency?: number;
+  assignedPlaylistId?: string;
+}
+
+export interface User {
+  username: string;
+  email: string;
+  profilePicture?: string;
+  password?: string;
+  createdAt: string;
 }
 
 export interface PlayerConfig {
@@ -60,7 +71,7 @@ export interface TelemetryEvent {
   data: any;
 }
 
-export type ViewState = 'home' | 'media' | 'playlist' | 'templates' | 'devices' | 'debug' | 'provision' | 'player' | 'help';
+export type ViewState = 'home' | 'media' | 'playlist' | 'templates' | 'devices' | 'debug' | 'provision' | 'player' | 'help' | 'profile';
 
 export interface WebOSStorageProvider {
   driveId: string;

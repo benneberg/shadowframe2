@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { storage } from '../services/storage';
-import { ViewState, Media, Device, Playlist, PlayerConfig } from '../types';
+import { ViewState, Media, Device, Playlist, PlayerConfig, User } from '../types';
 import { StatusBadge, GlowCard, MetricCard } from './ui/Shared';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, 
   CheckCircle2, 
@@ -19,12 +20,72 @@ import {
   Activity,
   ShieldCheck,
   Cpu,
-  Zap
+  Zap,
+  Globe,
+  MapPin,
+  X,
+  User as UserIcon
 } from 'lucide-react';
 
 interface DashboardProps {
   onNavigate: (view: ViewState) => void;
 }
+
+const DeviceMap = ({ devices }: { devices: Device[] }) => {
+  // Simple World SVG Overlay Simulation
+  return (
+    <div className="relative w-full aspect-[21/9] bg-black/40 rounded-[2rem] border border-white/5 overflow-hidden group">
+        {/* World Map SVG Mock */}
+        <svg viewBox="0 0 800 400" className="w-full h-full opacity-20 transition-opacity group-hover:opacity-30">
+            <path d="M150 100 Q 200 80 250 120 T 350 100 T 500 130 T 650 90 T 750 110" fill="none" stroke="currentColor" className="text-primary/30" strokeWidth="1" />
+            <path d="M100 250 Q 180 220 280 260 T 400 240 T 550 280 T 700 230" fill="none" stroke="currentColor" className="text-accent/30" strokeWidth="1" />
+            <circle cx="200" cy="150" r="1.5" className="fill-slate-800" />
+            <circle cx="400" cy="200" r="1.5" className="fill-slate-800" />
+            <circle cx="600" cy="120" r="1.5" className="fill-slate-800" />
+        </svg>
+
+        <div className="absolute inset-0 p-8 flex flex-col justify-between pointer-events-none">
+            <div className="flex items-center gap-3">
+                <Globe className="w-5 h-5 text-primary shadow-glow-cyan" />
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 italic">GEOSPATIAL_CLUSTER_VISUALIZER</span>
+            </div>
+            <div className="flex justify-between items-end">
+                <div className="flex gap-10">
+                    <div className="flex flex-col">
+                        <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">NODES_MAPPED</span>
+                        <span className="text-xl font-black text-foreground italic">{devices.length}</span>
+                    </div>
+                </div>
+                <div className="text-[9px] font-mono text-slate-700 uppercase tracking-widest italic">REAL_TIME_ORBITAL_SYNC_ACTIVE</div>
+            </div>
+        </div>
+
+        {/* Device Markers */}
+        {devices.map((dev, idx) => {
+            const x = 50 + (idx * 15) % 650; // Random-ish mock positions
+            const y = 80 + (idx * 25) % 250;
+            const status = dev.status || 'online';
+            
+            return (
+                <div 
+                    key={dev.deviceId}
+                    className="absolute cursor-pointer pointer-events-auto transform -translate-x-1/2 -translate-y-1/2 group/pin"
+                    style={{ left: `${(x / 800) * 100}%`, top: `${(y / 400) * 100}%` }}
+                >
+                    <div className="relative">
+                        <div className={`w-3 h-3 rounded-full border-2 border-background animate-pulse shadow-glow-cyan ${
+                            status === 'online' ? 'bg-primary' : status === 'attention' ? 'bg-amber-500' : 'bg-red-500'
+                        }`} />
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg opacity-0 group-hover/pin:opacity-100 transition-all scale-75 group-hover/pin:scale-100 whitespace-nowrap z-50">
+                            <p className="text-[8px] font-black text-white uppercase tracking-tighter">{dev.name}</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        })}
+    </div>
+  );
+};
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [data, setData] = useState({
@@ -34,17 +95,32 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     configs: [] as PlayerConfig[]
   });
 
+  const [user, setUser] = useState<User>(storage.getUser());
   const [statusCounts, setStatusCounts] = useState({ online: 0, attention: 0, offline: 0 });
+  const [alerts, setAlerts] = useState<{id: string, message: string}[]>([]);
 
   useEffect(() => {
-    const media = storage.getMedia();
     const devices = storage.getDevices();
+    const media = storage.getMedia();
     const playlists = storage.getPlaylists();
     const configs = storage.getConfigs();
     
     setData({ media, devices, playlists, configs });
 
-    // Real-time status calculation
+    // Identify offline devices for toast 
+    const offlineDeads = devices.filter(d => {
+        const lastSeen = new Date(d.lastSeen).getTime();
+        const diffMins = (Date.now() - lastSeen) / 1000 / 60;
+        return diffMins > 30;
+    });
+
+    if (offlineDeads.length > 0) {
+        setAlerts(offlineDeads.map(d => ({
+            id: d.deviceId,
+            message: `NODE_OFFLINE: ${d.name} has lost communication link.`
+        })));
+    }
+
     const calculateStatus = () => {
       const now = new Date().getTime();
       const counts = devices.reduce((acc, dev) => {
@@ -61,9 +137,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     };
 
     calculateStatus();
-    const interval = setInterval(calculateStatus, 30000); // Update every 30s
+    const interval = setInterval(calculateStatus, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  const removeAlert = (id: string) => setAlerts(prev => prev.filter(a => a.id !== id));
 
   const timeAgo = (dateStr: string) => {
     const seconds = Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 1000);
@@ -78,20 +156,52 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const recentMedia = [...data.media].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 4);
 
   return (
-    <div className="space-y-12 animate-slide-up pb-32">
+    <div className="space-y-12 animate-slide-up pb-32 relative">
+      {/* Alerts */}
+      <div className="fixed top-24 right-10 z-[60] flex flex-col gap-4 pointer-events-none">
+        <AnimatePresence>
+            {alerts.map((alert) => (
+                <motion.div 
+                    key={alert.id}
+                    initial={{ opacity: 0, x: 50, scale: 0.9 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                    className="pointer-events-auto bg-red-500/10 backdrop-blur-xl border border-red-500/20 p-5 rounded-2xl shadow-glow-amber-sm flex items-start gap-4 max-w-sm"
+                >
+                    <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-red-500 border border-red-500/20 shrink-0">
+                        <AlertTriangle className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                        <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-1">CRITICAL_FAULT</p>
+                        <p className="text-[11px] text-slate-300 font-medium leading-relaxed">{alert.message}</p>
+                    </div>
+                    <button 
+                        onClick={() => removeAlert(alert.id)}
+                        className="text-slate-600 hover:text-white transition-colors"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                </motion.div>
+            ))}
+        </AnimatePresence>
+      </div>
+
       {/* User Header */}
       <div className="flex justify-between items-center px-2">
         <div className="flex items-center gap-5">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden border border-white/10 shadow-glow-cyan/10 group cursor-pointer">
+          <div 
+            onClick={() => onNavigate('profile')}
+            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden border border-white/10 shadow-glow-cyan/10 group cursor-pointer"
+          >
             <img 
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" 
+              src={user.profilePicture || "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"} 
               alt="User Avatar" 
               className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500"
             />
           </div>
-          <div>
+          <div onClick={() => onNavigate('profile')} className="cursor-pointer">
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mb-1">NETWORK_OPERATOR_v3</p>
-            <h1 className="text-3xl font-black text-foreground tracking-tighter italic">WELCOME, <span className="text-primary">COMMANDER</span></h1>
+            <h1 className="text-3xl font-black text-foreground tracking-tighter italic">WELCOME, <span className="text-primary">{user.username.toUpperCase()}</span></h1>
           </div>
         </div>
         <div className="flex gap-4">
@@ -101,6 +211,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </button>
         </div>
       </div>
+
+      {/* Device Map */}
+      <section className="px-2">
+        <DeviceMap devices={data.devices} />
+      </section>
 
       {/* System Status Metrics */}
       <section className="space-y-6">

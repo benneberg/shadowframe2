@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { storage } from '../services/storage';
 import { ViewState, Device, Playlist, Media, Template, PlayerConfig } from '../types';
 import { GlowCard, StatusBadge } from './ui/Shared';
+import { QRCodeSVG } from 'qrcode.react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Zap, 
     Copy, 
@@ -19,7 +21,8 @@ import {
     ShieldCheck,
     Radio,
     Terminal,
-    Box
+    Box,
+    QrCode
 } from 'lucide-react';
 
 interface ProvisioningViewProps {
@@ -34,6 +37,7 @@ const ProvisioningView: React.FC<ProvisioningViewProps> = ({ onNavigate }) => {
   const [isProvisioning, setIsProvisioning] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [provisionedConfig, setProvisionedConfig] = useState<PlayerConfig | null>(null);
+  const [showQRModal, setShowQRModal] = useState(false);
 
   useEffect(() => {
     setDevices(storage.getDevices());
@@ -72,6 +76,8 @@ const ProvisioningView: React.FC<ProvisioningViewProps> = ({ onNavigate }) => {
     setTimeout(() => setCopySuccess(false), 2000);
   };
 
+  const activeDevice = devices.find(d => d.deviceId === selectedDeviceId);
+
   return (
     <div className="space-y-12 animate-slide-up pb-32">
        {/* Header */}
@@ -83,7 +89,77 @@ const ProvisioningView: React.FC<ProvisioningViewProps> = ({ onNavigate }) => {
                 <p className="text-[10px] text-slate-600 font-mono uppercase tracking-[0.3em] mt-1">Lifecycle Orchestration & Configuration</p>
             </div>
         </div>
+        
+        {selectedDeviceId && (
+            <button 
+                onClick={() => setShowQRModal(true)}
+                className="flex items-center gap-3 bg-white/5 border border-white/10 px-8 py-3.5 rounded-2xl text-slate-400 font-black text-[11px] uppercase tracking-widest hover:border-primary/20 hover:text-primary transition-all shadow-glow-cyan-sm group"
+            >
+                <QrCode className="w-5 h-5 group-hover:scale-110 transition-transform" /> Generate Setup QR
+            </button>
+        )}
       </div>
+
+      {/* QR Modal */}
+      <AnimatePresence>
+        {showQRModal && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                    className="relative w-full max-w-lg bg-card border border-white/10 rounded-[3rem] p-12 text-center"
+                >
+                    <button 
+                        onClick={() => setShowQRModal(false)}
+                        className="absolute top-8 right-8 p-3 text-slate-500 hover:text-white transition-colors"
+                    >
+                        <X className="w-6 h-6" />
+                    </button>
+
+                    <div className="mb-10 inline-flex p-6 bg-white/5 rounded-3xl border border-white/10 shadow-glow-cyan/5">
+                        <QrCode className="w-10 h-10 text-primary" />
+                    </div>
+
+                    <h3 className="text-2xl font-black text-foreground uppercase tracking-tighter italic mb-3">Hardware Setup Protocol</h3>
+                    <p className="text-[11px] font-mono text-slate-500 uppercase tracking-widest leading-relaxed mb-10 max-w-sm mx-auto">
+                        Scan with mobile device to initialize <span className="text-primary font-bold">{activeDevice?.name}</span> and sync cryptograph keys.
+                    </p>
+
+                    <div className="bg-white p-10 rounded-[2.5rem] shadow-glow-cyan/20 mx-auto w-fit mb-10">
+                        <QRCodeSVG 
+                            value={JSON.stringify({
+                                deviceId: activeDevice?.deviceId,
+                                endpoint: window.location.origin,
+                                protocol: 'secure_iot_v3'
+                            })}
+                            size={200}
+                            fgColor="#000000"
+                            bgColor="#ffffff"
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pb-8 border-b border-white/5 mb-8">
+                        <div className="text-left space-y-1">
+                            <span className="text-[8px] font-black text-slate-700 uppercase tracking-widest">DEVICE_UID</span>
+                            <p className="text-[10px] font-mono text-slate-400 uppercase truncate">{activeDevice?.deviceId}</p>
+                        </div>
+                        <div className="text-right space-y-1">
+                            <span className="text-[8px] font-black text-slate-700 uppercase tracking-widest">SESSION_KEY</span>
+                            <p className="text-[10px] font-mono text-emerald-500 uppercase">VAULT_ACTIVE</p>
+                        </div>
+                    </div>
+
+                    <button 
+                        onClick={() => setShowQRModal(false)}
+                        className="w-full bg-primary py-5 rounded-2xl text-black font-black text-[11px] uppercase tracking-[0.3em] shadow-glow-cyan hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    >
+                        TERMINATE_VISUAL_SYNC
+                    </button>
+                </motion.div>
+            </div>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
         {/* Setup Column */}

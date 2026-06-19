@@ -7,7 +7,7 @@ import { DualVideoEngine } from '../video/DualVideoEngine';
 import { DeviceShadowClient } from '../shadow/DeviceShadowClient';
 import { HealthMonitor } from './HealthMonitor';
 import { Bridge } from '../modules/Bridge';
-import { HardwareLogger } from '../modules/HardwareLogger';
+import { HardwareLoggingModule } from '../modules/HardwareLoggingModule';
 import { eventBus } from './EventBus';
 
 export class Runtime {
@@ -17,7 +17,7 @@ export class Runtime {
   private videoEngine: DualVideoEngine;
   private shadowClient: DeviceShadowClient;
   private healthMonitor: HealthMonitor;
-  private hardwareLogger: HardwareLogger;
+  private hardwareLogger: HardwareLoggingModule;
 
   constructor(container: HTMLElement, config: PlayerRuntimeConfig) {
     this.assetManager = new AssetManager();
@@ -26,7 +26,7 @@ export class Runtime {
     this.sequencer = new Sequencer(this.videoEngine, this.renderer, this.assetManager);
     this.shadowClient = new DeviceShadowClient(config.playerId);
     this.healthMonitor = new HealthMonitor();
-    this.hardwareLogger = HardwareLogger.getInstance();
+    this.hardwareLogger = HardwareLoggingModule.getInstance();
 
     this.hardwareLogger.init();
     this.setupListeners();

@@ -10,6 +10,7 @@ import DebugInspector from './components/DebugInspector';
 import ProvisioningView from './components/ProvisioningView';
 import VirtualPlayer from './components/VirtualPlayer';
 import HelpCenter from './components/HelpCenter';
+import UserProfile from './components/UserProfile';
 import { 
   Layout, 
   PlaySquare, 
@@ -48,6 +49,7 @@ const App: React.FC = () => {
       case 'provision': return <ProvisioningView onNavigate={setActiveTab} />;
       case 'player': return <VirtualPlayer onNavigate={setActiveTab} />;
       case 'help': return <HelpCenter onNavigate={setActiveTab} />;
+      case 'profile': return <UserProfile onNavigate={setActiveTab} />;
       default: return <Dashboard onNavigate={setActiveTab} />;
     }
   };
