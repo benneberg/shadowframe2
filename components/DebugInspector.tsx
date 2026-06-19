@@ -258,7 +258,7 @@ const DebugInspector: React.FC<DebugInspectorProps> = ({ onNavigate }) => {
                         <div key={p.driveId} className="p-4 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between group">
                             <div className="space-y-1">
                                 <h4 className="text-[10px] font-black text-foreground uppercase italic group-hover:text-primary transition-colors">{p.label || p.driveId}</h4>
-                                <p className="text-[9px] font-mono text-slate-700 uppercase tracking-widest">{p.storageType} {"->"} {p.path}</p>
+                                <p className="text-[9px] font-mono text-slate-700 uppercase tracking-widest">{p.storageType} {"\u2192"} {p.path}</p>
                             </div>
                             <StatusBadge status="online" className="text-[8px] bg-primary/10 border border-primary/20 text-primary">MOUNTED</StatusBadge>
                         </div>
@@ -276,11 +276,20 @@ const DebugInspector: React.FC<DebugInspectorProps> = ({ onNavigate }) => {
                     <Activity className="w-5 h-5" />
                     <span className="text-[11px] font-black uppercase tracking-[0.2em] italic">PHYSICAL_SESSION_LOG</span>
                 </div>
-                <div className="bg-black/80 rounded-2xl p-6 font-mono text-[10px] text-emerald-500/80 leading-relaxed border border-white/5 h-[300px] overflow-y-auto no-scrollbar">
-                    {physicalLogs.split('\n').map((line, i) => (
-                        <div key={i} className="py-0.5 whitespace-pre-wrap">{line}</div>
-                    ))}
-                </div>
+                    <div className="bg-black/80 rounded-2xl p-6 font-mono text-[10px] text-emerald-500/80 leading-relaxed border border-white/5 h-[300px] overflow-y-auto no-scrollbar">
+                        {physicalLogs.split('\n').map((line, i) => (
+                            <div key={i} className="py-0.5 whitespace-pre-wrap">
+                                {line.startsWith('[') ? (
+                                    <span className="opacity-50">{line.slice(0, 26)}</span>
+                                ) : null}
+                                {line.includes('KERNEL_EVENT') ? (
+                                    <span className="text-emerald-400">{line.slice(line.indexOf('KERNEL_EVENT'))}</span>
+                                ) : (
+                                    line.slice(line.startsWith('[') ? 26 : 0)
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 <div className="flex justify-between items-center text-[8px] font-mono text-slate-700 uppercase tracking-widest italic">
                     <span>Target: /logs/kernel.log</span>
                     <span>Persistence: Virtual_Append</span>

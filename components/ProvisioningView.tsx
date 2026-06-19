@@ -38,6 +38,8 @@ const ProvisioningView: React.FC<ProvisioningViewProps> = ({ onNavigate }) => {
   const [copySuccess, setCopySuccess] = useState(false);
   const [provisionedConfig, setProvisionedConfig] = useState<PlayerConfig | null>(null);
   const [showQRModal, setShowQRModal] = useState(false);
+  const [pingLatency, setPingLatency] = useState<number | null>(null);
+  const [isPinging, setIsPinging] = useState(false);
 
   useEffect(() => {
     setDevices(storage.getDevices());
@@ -74,6 +76,19 @@ const ProvisioningView: React.FC<ProvisioningViewProps> = ({ onNavigate }) => {
     navigator.clipboard.writeText(JSON.stringify(provisionedConfig, null, 2));
     setCopySuccess(true);
     setTimeout(() => setCopySuccess(false), 2000);
+  };
+  
+  const handlePing = () => {
+    if (!selectedDeviceId) return;
+    setIsPinging(true);
+    setPingLatency(null);
+    
+    // Simulate network round-trip
+    setTimeout(() => {
+        const latency = Math.floor(Math.random() * 80) + 10;
+        setPingLatency(latency);
+        setIsPinging(false);
+    }, 1200);
   };
 
   const activeDevice = devices.find(d => d.deviceId === selectedDeviceId);
@@ -286,6 +301,34 @@ const ProvisioningView: React.FC<ProvisioningViewProps> = ({ onNavigate }) => {
                                 <Zap className="w-5 h-5 shadow-glow-cyan" /> Initialize Hardware Protocol
                             </button>
                          </GlowCard>
+
+                         {selectedDeviceId && (
+                            <div className="p-8 bg-white/5 rounded-3xl border border-white/5 relative overflow-hidden group">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center gap-3 text-primary">
+                                        <Activity className="w-4 h-4 shadow-glow-cyan" />
+                                        <span className="text-[9px] font-black uppercase tracking-[0.3em] italic">Network_Diagnostics</span>
+                                    </div>
+                                    {pingLatency !== null && (
+                                        <span className="text-[10px] font-mono text-emerald-500 font-bold tracking-widest">{pingLatency}ms</span>
+                                    )}
+                                </div>
+                                
+                                <div className="flex items-center justify-between gap-4">
+                                    <p className="text-[10px] text-slate-500 font-mono leading-relaxed uppercase tracking-wider">
+                                        Measure round-trip latency to <span className="text-primary font-bold">{activeDevice?.name}</span> edge node.
+                                    </p>
+                                    <button 
+                                        onClick={handlePing}
+                                        disabled={isPinging}
+                                        className="bg-black/40 border border-white/10 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50 flex items-center gap-2 whitespace-nowrap"
+                                    >
+                                        {isPinging ? <RefreshCw className="w-3 h-3 animate-spin" /> : <ShieldCheck className="w-3 h-3" />}
+                                        {isPinging ? 'PINGING...' : 'RUN_TEST'}
+                                    </button>
+                                </div>
+                            </div>
+                         )}
 
                          <div className="p-8 bg-white/5 rounded-3xl border border-white/5 relative overflow-hidden group">
                              <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none group-hover:opacity-20 transition-opacity">

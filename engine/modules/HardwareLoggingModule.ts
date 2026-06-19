@@ -13,6 +13,8 @@ export class HardwareLoggingModule {
     private readonly STORAGE_TYPE = 'internal';
     private readonly DRIVE_ID = 'INTERNAL_STORAGE';
 
+    private initialized = false;
+
     private constructor() {}
 
     static getInstance(): HardwareLoggingModule {
@@ -26,6 +28,9 @@ export class HardwareLoggingModule {
      * Start the hardware logging protocol
      */
     init() {
+        if (this.initialized) return;
+        this.initialized = true;
+
         console.log('[HardwareLoggingModule] Initializing physical logging stream...');
         
         // Listen to everything from the engine heart
