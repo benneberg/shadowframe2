@@ -39,6 +39,21 @@ export class Runtime {
     // Pre-start steps
   }
 
+  private handleShadowUpdate = (e: any) => {
+    const current = this.sequencer.currentConfig;
+    if (e.detail.playlist && current) {
+      console.log('[Runtime] Seamlessly applying playlist delta...');
+      const newConfig = { ...current, playlist: e.detail.playlist };
+      this.sequencer.setConfig(newConfig as any);
+    }
+    
+    if (e.detail.syncTime) {
+      // Multi-device sync pulse
+      console.log('[Runtime] Synchronizing with leader cluster...');
+      // SyncEngine would be used here if fully wired
+    }
+  };
+
   private setupListeners() {
     // Media telemetry loop
     eventBus.on('playback:started', ({ mediaId }) => {
@@ -56,20 +71,7 @@ export class Runtime {
     });
 
     // Shadow Sync Loop
-    window.addEventListener('shadow:update', (e: any) => {
-      const current = this.sequencer.currentConfig;
-      if (e.detail.playlist && current) {
-        console.log('[Runtime] Seamlessly applying playlist delta...');
-        const newConfig = { ...current, playlist: e.detail.playlist };
-        this.sequencer.setConfig(newConfig as any);
-      }
-      
-      if (e.detail.syncTime) {
-        // Multi-device sync pulse
-        console.log('[Runtime] Synchronizing with leader cluster...');
-        // SyncEngine would be used here if fully wired
-      }
-    });
+    window.addEventListener('shadow:update', this.handleShadowUpdate);
 
     eventBus.on('error', (err) => {
       console.error('[Runtime] Platform error:', err);
@@ -97,6 +99,7 @@ export class Runtime {
   }
 
   destroy() {
+    window.removeEventListener('shadow:update', this.handleShadowUpdate);
     this.sequencer.stop();
     this.shadowClient.disconnect();
     this.healthMonitor.stop();

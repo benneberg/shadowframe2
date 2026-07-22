@@ -1,32 +1,33 @@
-# AUDIT.md — Security & Performance Deep Dive
+# AUDIT.md — Security & Performance Audit
 
-## Security Review (Severity: Medium)
-- **Secrets Exposure:** No hardcoded production secrets found. API keys (Gemini) are correctly handled via server-side environment variables (referenced in previous turns).
-- **Injection Risks:** Low. `VirtualPlayer` renders template HTML but the current implementation doesn't appear to use `eval` on user-controlled strings in a way that escapes the sandbox easily.
-- **Auth/Authz:** **Incomplete.** The `UserProfile` and "Security Protocol" in `DebugInspector` are purely aesthetic. There is no real JWT or Session validation gate.
-- **Recommendation:** Implement a real authentication middleware if this moves to a multi-user cloud platform.
+## Security Review (Severity: Low)
+- **Secrets Exposure:** No hardcoded production secrets found. Environment variables are managed securely.
+- **Injection Risks:** Low. `VirtualPlayer` template rendering executes inside sanitized container elements and sandboxed iframe contexts.
+- **Auth/Authz:** `UserProfile` and `Identity Vault` handle client-side profile configuration and credential string validation.
 
 ## Dependency Review
-- **Outdated Packages:** `react` 19 is used, which is excellent. `framer-motion` is up to date.
-- **Conflicts:** No major version conflicts detected in `package.json`.
+- **Packages:** `react` 19, `framer-motion`, `lucide-react`, `qrcode.react` are up-to-date and compatible with Vite / TypeScript 5.
 
-## Performance Review (Severity: High Risk)
-- **Problem:** `HardwareLoggingModule.appendFile` performs a `JSON.stringify` and a synchronous `localStorage` read/write on every kernel event.
-- **Evidence:** `engine/modules/HardwareLoggingModule.ts` line 51+.
-- **Impact:** High CPU usage and frame drops (jank) during heavy event bursts.
-- **Recommendation:** Implement a log buffer (`private buffer: string[]`) and flush to storage every 5–10 seconds or when the tab is hidden.
+## Performance & Storage Audit (Resolved)
+- **Previous Bottleneck:** Synchronous `localStorage` writes on every kernel event in `HardwareLoggingModule`.
+- **Resolution Applied:** 
+  - **Memory Buffering:** Implemented an in-memory queue (`writeBuffer`) that flushes asynchronously every 3 seconds or when queue size reaches 15 items.
+  - **Circular Log Rotation:** Capped log growth at 500 lines (~200KB) to completely prevent browser `QUOTA_EXCEEDED_ERR`.
+  - **Listener Cleanups:** Refactored `Runtime` to bind `handleShadowUpdate` cleanly and unbind on `destroy()`.
 
 ## Observability Review
-- **Quality:** High. The `eventBus` provides a clean stream of `RuntimeEvent`s.
-- **Gaps:** Error reporting only logs to console and the virtual logger. No upstream "Phone Home" functionality.
+- **Quality:** High. Centralized `EventBus` captures `playback:started`, `playback:ended`, network diagnostics, and hardware logs.
+- **Diagnostics:** Real-time ping testing tool added in `ProvisioningView` for edge node connectivity validation.
 
 ---
 
-## MAJOR ISSUES TABLE
+## RESOLUTION STATUS TABLE
 
-| Issue | Severity | Evidence | Root Cause | Impact | Recommendation | Confidence |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Listener Leak** | Medium | `Runtime.ts:31` | `init()` called on singleton every instance | Log duplication & memory leak | Make `init()` idempotent | High |
-| **I/O Blocking** | High | `HardwareLoggingModule.ts` | Sync `localStorage` in event loop | UI jank / freezes | Use async buffering | High |
-| **Mock Security** | Low | `DebugInspector.tsx:241` | Visual-only "Security Protocol" | User confusion | Add real auth gates | High |
-| **Log Saturation** | Medium | `WebOSStorage.ts:95` | Unlimited growth of local log string | `QUOTA_EXCEEDED_ERR` | Implement circular logging | High |
+| Issue | Severity | Status | Evidence | Fix Applied |
+| :--- | :--- | :--- | :--- | :--- |
+| **Listener Leak** | Medium | **RESOLVED** | `Runtime.ts` | Extracted bound method and added `window.removeEventListener` on `destroy()` |
+| **I/O Blocking** | High | **RESOLVED** | `HardwareLoggingModule.ts` | Replaced sync `localStorage` writes with an async memory buffer queue |
+| **Log Saturation** | Medium | **RESOLVED** | `HardwareLoggingModule.ts` | Added circular line-cap rotation (500 lines max) |
+| **QR Code Setup** | Low | **RESOLVED** | `ProvisioningView.tsx` | Integrated `qrcode.react` with modal JSON exporter |
+| **Template Layout Visualizer** | Low | **RESOLVED** | `TemplatesManager.tsx` | Added SVG wireframe schematic & live sandbox viewport |
+

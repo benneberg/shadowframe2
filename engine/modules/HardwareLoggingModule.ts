@@ -12,8 +12,12 @@ export class HardwareLoggingModule {
     private readonly LOG_PATH = '/logs/signage_kernel.log';
     private readonly STORAGE_TYPE = 'internal';
     private readonly DRIVE_ID = 'INTERNAL_STORAGE';
+    private readonly MAX_LOG_LINES = 500; // Circular log threshold
 
     private initialized = false;
+    private writeBuffer: string[] = [];
+    private flushTimer: any = null;
+    private isFlushing = false;
 
     private constructor() {}
 
@@ -38,6 +42,11 @@ export class HardwareLoggingModule {
             this.handleKernelEvent(event);
         });
 
+        // Start periodic background flush every 3s
+        this.flushTimer = setInterval(() => {
+            this.flushBuffer();
+        }, 3000);
+
         // Log the kernel initialization event immediately
         this.appendFile('SYSTEM_BOOT: Hardware Logging Module attached to core kernel.');
     }
@@ -50,30 +59,55 @@ export class HardwareLoggingModule {
 
     /**
      * Virtual Append Functionality
-     * Implements a Read -> Merge -> Write cycle to simulate persistent file appending 
-     * in the sandboxed internal application storage.
+     * Queues log entries into a memory buffer and schedules asynchronous flushes.
      */
     async appendFile(data: string): Promise<boolean> {
+        this.writeBuffer.push(data);
+
+        // If buffer gets large (>15 items), flush immediately
+        if (this.writeBuffer.length >= 15) {
+            this.flushBuffer();
+        }
+        return true;
+    }
+
+    /**
+     * Flushes memory buffer to WebOSStorage with circular rotation
+     */
+    private async flushBuffer() {
+        if (this.writeBuffer.length === 0 || this.isFlushing) return;
+        this.isFlushing = true;
+
+        const chunkToFlush = [...this.writeBuffer];
+        this.writeBuffer = [];
+
         const webos = WebOSStorage.getInstance();
-        
+
         try {
-            // Virtual append: fetch previous state, merge, and commit
             const existing = await webos.readFile({
                 storageType: this.STORAGE_TYPE,
                 driveId: this.DRIVE_ID,
                 path: this.LOG_PATH
             });
 
-            const merged = existing ? `${existing}\n${data}` : data;
+            const existingLines = existing ? existing.split('\n') : [];
+            const mergedLines = [...existingLines, ...chunkToFlush];
 
-            return await webos.writeFile({
+            // Enforce circular logging cap
+            const trimmedLines = mergedLines.length > this.MAX_LOG_LINES 
+                ? mergedLines.slice(mergedLines.length - this.MAX_LOG_LINES)
+                : mergedLines;
+
+            await webos.writeFile({
                 storageType: this.STORAGE_TYPE,
                 driveId: this.DRIVE_ID,
                 path: this.LOG_PATH
-            }, merged);
+            }, trimmedLines.join('\n'));
         } catch (err) {
-            console.error('[HardwareLoggingModule] Virtual append failed:', err);
-            return false;
+            console.error('[HardwareLoggingModule] Flush failed, restoring chunk:', err);
+            this.writeBuffer = [...chunkToFlush, ...this.writeBuffer];
+        } finally {
+            this.isFlushing = false;
         }
     }
 
@@ -81,6 +115,9 @@ export class HardwareLoggingModule {
      * Retrieval Interface for signage maintenance dashboards
      */
     async getLogs(): Promise<string | null> {
+        // Flush pending buffer before returning
+        await this.flushBuffer();
+
         return await WebOSStorage.getInstance().readFile({
             storageType: this.STORAGE_TYPE,
             driveId: this.DRIVE_ID,
@@ -92,6 +129,7 @@ export class HardwareLoggingModule {
      * Reset the maintenance log
      */
     async purge(): Promise<boolean> {
+        this.writeBuffer = [];
         return await WebOSStorage.getInstance().writeFile({
             storageType: this.STORAGE_TYPE,
             driveId: this.DRIVE_ID,

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { storage } from '../services/storage';
 import { ViewState, Template } from '../types';
 import { GlowCard, StatusBadge } from './ui/Shared';
+import { TemplateLayoutPreview } from './TemplateLayoutPreview';
 import { 
   FileCode, 
   Code, 
@@ -17,7 +18,8 @@ import {
   ChevronRight,
   Terminal,
   Activity,
-  Layers
+  Layers,
+  Eye
 } from 'lucide-react';
 
 interface TemplatesManagerProps {
@@ -44,9 +46,21 @@ const TemplatesManager: React.FC<TemplatesManagerProps> = ({ onNavigate }) => {
     const newTemplate: Template = {
       templateId: `tpl-${Date.now()}`,
       name: 'NEW_MODULE_PROTOCOL',
-      html: '<div class="container">\n  <h1>{{media.name}}</h1>\n</div>',
-      css: '.container {\n  padding: 2rem;\n  color: #00ffc6;\n}',
-      js: 'console.log("Kernel module initialized");',
+      html: `<div class="fullscreen">
+  <div class="media-wrap">
+    <img src="{{media.url}}" class="content-item" />
+  </div>
+  <div class="overlay">
+    <h1>{{media.name}}</h1>
+    <p>NODE: {{playerId}}</p>
+  </div>
+</div>`,
+      css: `.fullscreen { width: 100vw; height: 100vh; position: relative; background: #000; }
+.content-item { width: 100%; height: 100%; object-fit: cover; }
+.overlay { position: absolute; bottom: 30px; left: 30px; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 12px; border: 1px solid #00ffc6; color: #fff; }
+h1 { margin: 0; color: #00ffc6; font-size: 18px; }
+p { margin: 4px 0 0 0; opacity: 0.7; font-size: 12px; }`,
+      js: 'console.log("New protocol loaded");',
       createdAt: new Date().toISOString()
     };
     setEditingTemplate(newTemplate);
@@ -88,21 +102,24 @@ const TemplatesManager: React.FC<TemplatesManagerProps> = ({ onNavigate }) => {
             {templates.map((tpl) => (
               <GlowCard 
                 key={tpl.templateId} 
-                className={`p-6 border-white/5 hover:bg-white/5 transition-all group flex items-center justify-between cursor-pointer ${editingTemplate?.templateId === tpl.templateId ? 'border-accent/40 bg-accent/5 ring-1 ring-accent/20' : ''}`}
+                className={`p-6 border-white/5 hover:bg-white/5 transition-all group flex flex-col gap-5 cursor-pointer ${editingTemplate?.templateId === tpl.templateId ? 'border-accent/40 bg-accent/5 ring-1 ring-accent/20' : ''}`}
                 onClick={() => setEditingTemplate(tpl)}
               >
-                <div className="flex items-center gap-5">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all ${editingTemplate?.templateId === tpl.templateId ? 'bg-accent/10 border-accent/30 text-accent shadow-glow-purple-sm' : 'bg-white/5 border-white/5 text-slate-600 group-hover:text-accent group-hover:border-accent/20'}`}>
-                    <FileCode className="w-6 h-6" />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${editingTemplate?.templateId === tpl.templateId ? 'bg-accent/10 border-accent/30 text-accent shadow-glow-purple-sm' : 'bg-white/5 border-white/5 text-slate-600 group-hover:text-accent group-hover:border-accent/20'}`}>
+                      <FileCode className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-black text-foreground truncate uppercase tracking-tighter italic">{tpl.name}</h3>
+                      <p className="text-[10px] text-slate-600 font-mono mt-0.5 uppercase tracking-widest">ID: {tpl.templateId.toUpperCase()}</p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-black text-foreground truncate uppercase tracking-tighter italic">{tpl.name}</h3>
-                    <p className="text-[10px] text-slate-600 font-mono mt-1 uppercase tracking-widest">ID: {tpl.templateId.toUpperCase()}</p>
-                  </div>
+                  <ChevronRight className={`w-5 h-5 transition-all ${editingTemplate?.templateId === tpl.templateId ? 'text-accent translate-x-1' : 'text-slate-800'}`} />
                 </div>
-                <div className="flex items-center gap-2">
-                   <ChevronRight className={`w-5 h-5 transition-all ${editingTemplate?.templateId === tpl.templateId ? 'text-accent translate-x-1' : 'text-slate-800'}`} />
-                </div>
+
+                {/* Compact Layout Preview Component */}
+                <TemplateLayoutPreview template={tpl} mode="compact" />
               </GlowCard>
             ))}
             
@@ -115,9 +132,13 @@ const TemplatesManager: React.FC<TemplatesManagerProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Editor Section */}
+        {/* Editor & Full Preview Section */}
         {editingTemplate && (
-          <div className="xl:col-span-8 animate-in slide-in-from-right duration-500">
+          <div className="xl:col-span-8 space-y-8 animate-in slide-in-from-right duration-500">
+            {/* Visual Preview Component in Editor */}
+            <TemplateLayoutPreview template={editingTemplate} mode="full" />
+
+            {/* Code Editor */}
             <GlowCard className="bg-black/40 border-accent/20 h-full flex flex-col p-8 overflow-hidden relative group">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 pb-8 border-b border-white/5">
                 <div className="space-y-1">
@@ -142,7 +163,7 @@ const TemplatesManager: React.FC<TemplatesManagerProps> = ({ onNavigate }) => {
                         onClick={handleSave}
                         className="flex items-center gap-3 bg-accent px-8 py-3.5 rounded-xl text-black font-black text-[11px] uppercase tracking-widest shadow-glow-purple hover:shadow-purple-500/40 transition-all hover:scale-105 active:scale-95"
                     >
-                        <Save className="w-5 h-5" /> Commit to Kernal
+                        <Save className="w-5 h-5" /> Commit to Kernel
                     </button>
                 </div>
               </div>
@@ -169,7 +190,7 @@ const TemplatesManager: React.FC<TemplatesManagerProps> = ({ onNavigate }) => {
                      L: {editingTemplate[activeTab as keyof Template].toString().split('\n').length} | Syntax: {activeTab.toUpperCase()}
                    </div>
                    <textarea
-                     className="w-full h-[500px] p-8 bg-black/40 border border-white/5 rounded-2xl text-sm font-mono text-accent leading-relaxed outline-none focus:border-accent/40 shadow-inner transition-all no-scrollbar resize-none"
+                     className="w-full h-[360px] p-8 bg-black/40 border border-white/5 rounded-2xl text-sm font-mono text-accent leading-relaxed outline-none focus:border-accent/40 shadow-inner transition-all no-scrollbar resize-none"
                      spellCheck={false}
                      value={editingTemplate[activeTab as keyof Template]}
                      onChange={(e) => setEditingTemplate({...editingTemplate, [activeTab]: e.target.value})}

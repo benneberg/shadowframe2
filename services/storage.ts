@@ -14,10 +14,99 @@ const KEYS = {
 const DEFAULT_TEMPLATES: Template[] = [
   {
     templateId: 'temp-001',
-    name: 'Standard Fullscreen',
-    html: '<div id="player-container" class="fullscreen">\n  <div class="media-wrap">\n    <img src="{{media.url}}" class="content-item" />\n  </div>\n  <div class="overlay">\n    <h1>{{playlist.name}}</h1>\n    <p>Player: {{playerId}}</p>\n  </div>\n</div>',
-    css: 'body { margin: 0; background: black; font-family: sans-serif; } \n.fullscreen { width: 100vw; height: 100vh; position: relative; overflow: hidden; }\n.content-item { width: 100%; height: 100%; object-fit: cover; }\n.overlay { position: absolute; bottom: 20px; left: 20px; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }',
-    js: 'console.log("Template Loaded: Fullscreen Initialized");',
+    name: 'Standard Fullscreen HUD',
+    html: `<div id="player-container" class="fullscreen">
+  <div class="media-wrap">
+    <img src="{{media.url}}" class="content-item" />
+  </div>
+  <div class="overlay">
+    <div class="badge">LIVE_BROADCAST</div>
+    <h1>{{media.name}}</h1>
+    <p>PLAYLIST: {{playlist.name}} | ID: {{playerId}}</p>
+  </div>
+</div>`,
+    css: `body { margin: 0; background: #000; font-family: system-ui, sans-serif; } 
+.fullscreen { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+.content-item { width: 100%; height: 100%; object-fit: cover; }
+.overlay { position: absolute; bottom: 30px; left: 30px; color: #fff; background: rgba(0,0,0,0.75); padding: 20px 28px; border-radius: 16px; border: 1px solid rgba(0,255,198,0.3); backdrop-filter: blur(12px); max-width: 480px; }
+.badge { display: inline-block; background: #00ffc6; color: #000; font-weight: 900; font-size: 10px; padding: 4px 10px; border-radius: 6px; letter-spacing: 2px; margin-bottom: 8px; }
+h1 { margin: 0 0 6px 0; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
+p { margin: 0; font-size: 11px; opacity: 0.7; font-family: monospace; }`,
+    js: 'console.log("Standard Fullscreen HUD Initialized");',
+    createdAt: new Date().toISOString()
+  },
+  {
+    templateId: 'temp-002',
+    name: 'Split Screen 70/30 Layout',
+    html: `<div class="split-layout">
+  <div class="main-media">
+    <img src="{{media.url}}" class="content-item" />
+  </div>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>SYSTEM_FEED</h2>
+      <div class="live-dot"></div>
+    </div>
+    <div class="widget">
+      <span class="label">CURRENT ASSET</span>
+      <span class="value">{{media.name}}</span>
+    </div>
+    <div class="widget">
+      <span class="label">NODE ID</span>
+      <span class="value">{{playerId}}</span>
+    </div>
+    <div class="widget">
+      <span class="label">CAMPAIGN</span>
+      <span class="value">{{playlist.name}}</span>
+    </div>
+  </div>
+</div>`,
+    css: `body { margin: 0; background: #050508; font-family: sans-serif; color: #fff; }
+.split-layout { display: flex; width: 100vw; height: 100vh; }
+.main-media { flex: 7; height: 100%; background: #000; overflow: hidden; }
+.content-item { width: 100%; height: 100%; object-fit: cover; }
+.sidebar { flex: 3; background: #0d0e15; border-left: 2px solid rgba(0,255,198,0.2); padding: 30px; display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; }
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+.sidebar-header h2 { margin: 0; font-size: 14px; font-weight: 900; letter-spacing: 2px; color: #00ffc6; }
+.live-dot { width: 10px; height: 10px; background: #00ffc6; border-radius: 50%; box-shadow: 0 0 10px #00ffc6; }
+.widget { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; }
+.label { display: block; font-size: 9px; font-family: monospace; color: #64748b; letter-spacing: 2px; margin-bottom: 4px; }
+.value { font-size: 14px; font-weight: 700; color: #f8fafc; }`,
+    js: 'console.log("Split Screen 70/30 Initialized");',
+    createdAt: new Date().toISOString()
+  },
+  {
+    templateId: 'temp-003',
+    name: 'L-Bar Signage & Ticker',
+    html: `<div class="lbar-layout">
+  <div class="top-area">
+    <div class="media-box">
+      <img src="{{media.url}}" class="content-item" />
+    </div>
+    <div class="side-panel">
+      <h3>ANNOUNCEMENTS</h3>
+      <p class="panel-text">Welcome to the 2026 Tech Summit. Check schedules on main display.</p>
+      <div class="status-tag">ACTIVE_ZONE</div>
+    </div>
+  </div>
+  <div class="bottom-ticker">
+    <div class="ticker-badge">NEWS TICKER</div>
+    <div class="ticker-text">SYSTEM STATUS: OPTIMAL /// PLAYLIST: {{playlist.name}} /// NODE: {{playerId}} /// ASSET: {{media.name}}</div>
+  </div>
+</div>`,
+    css: `body { margin: 0; background: #000; font-family: sans-serif; color: #fff; }
+.lbar-layout { display: flex; flex-direction: column; width: 100vw; height: 100vh; }
+.top-area { display: flex; flex: 1; height: calc(100vh - 60px); }
+.media-box { flex: 3; background: #111; }
+.content-item { width: 100%; height: 100%; object-fit: cover; }
+.side-panel { flex: 1; background: #12131e; border-left: 2px solid #7c3aed; padding: 24px; box-sizing: border-box; }
+.side-panel h3 { color: #a78bfa; margin-top: 0; font-size: 14px; letter-spacing: 2px; }
+.panel-text { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+.status-tag { display: inline-block; background: rgba(124,58,237,0.2); border: 1px solid #7c3aed; color: #c4b5fd; font-size: 9px; padding: 4px 10px; border-radius: 6px; }
+.bottom-ticker { height: 60px; background: #09090e; border-top: 2px solid #00ffc6; display: flex; align-items: center; padding: 0 20px; gap: 20px; box-sizing: border-box; }
+.ticker-badge { background: #00ffc6; color: #000; font-weight: 900; font-size: 10px; padding: 6px 14px; border-radius: 8px; letter-spacing: 2px; }
+.ticker-text { font-family: monospace; font-size: 12px; color: #00ffc6; opacity: 0.9; white-space: nowrap; overflow: hidden; }`,
+    js: 'console.log("L-Bar Signage Initialized");',
     createdAt: new Date().toISOString()
   }
 ];
