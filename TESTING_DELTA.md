@@ -1,51 +1,39 @@
 # TESTING_DELTA.md
 
-## Existing Test Strategy
-- **Status:** **Missing.** No automated tests found in the repository.
-
-## Coverage Gaps
-1. **Engine Sequencer (P0):** The core playlist rotation logic.
-2. **Storage Bridge (P1):** Verification of virtual append and persistence across reloads.
-3. **Asset preloading (P1):** Ensuring assets are fully buffered before playback starts.
+## Automated Test Strategy
+- **Status:** **Implemented.** Vitest is configured and running as part of the automated CI pipeline.
+- **Test Runner:** Vitest (`vitest run`)
+- **Configuration:** `vitest.config.ts` with browser API mocks (`tests/setup.ts`)
 
 ---
 
-## RECOMMENDATION: Vitest + Playwright
-- **Vitest:** For unit testing engine logic (types, sequencers, bus).
-- **Playwright:** For end-to-end testing of the `VirtualPlayer` simulation.
+## Test Suites & Coverage
 
-## Directory Structure
-```
-/tests
-  /unit
-    sequencer.test.ts
-    storage.test.ts
-  /e2e
-    player.spec.ts
-```
+| Subsystem | Test File | Description | Status |
+| --------- | --------- | ----------- | ------ |
+| **EventBus** | `tests/unit/event-bus.test.ts` | Typed subscriptions, generic listeners, unregistering, error boundary | :white_check_mark: Passing (4/4) |
+| **WebOSStorage** | `tests/unit/storage.test.ts` | Atomic writes, reads, virtual append, mock discovery, 0-byte file safety | :white_check_mark: Passing (4/4) |
+| **HardwareLogging** | `tests/unit/hardware-logging.test.ts` | Buffered queue, log retrieval, purge, 500-line circular rotation ceiling | :white_check_mark: Passing (3/3) |
+| **PlaylistDiff** | `tests/unit/playlist-diff.test.ts` | Playlist reconciliation, addition/removal detection, item mismatches | :white_check_mark: Passing (3/3) |
+| **CMS Storage** | `tests/unit/cms-storage.test.ts` | Media lifecycle, device registry, telemetry ring-buffer, default templates | :white_check_mark: Passing (4/4) |
 
-## Bootstrap Test Case (`/tests/unit/storage.test.ts`)
-```typescript
-import { describe, it, expect, beforeEach } from 'vitest';
-import { WebOSStorage } from '../../engine/modules/WebOSStorage';
+**Total:** 18 passing tests across 5 test suites.
 
-describe('WebOSStorage', () => {
-  beforeEach(() => { localStorage.clear(); });
+---
 
-  it('correctly appends data to a virtual file', async () => {
-    const storage = WebOSStorage.getInstance();
-    const req = { storageType: 'internal', driveId: 'test', path: '/test.log' };
-    
-    await storage.writeFile(req, 'line1');
-    await storage.appendFile(req, 'line2');
-    
-    const content = await storage.readFile(req);
-    expect(content).toBe('line1\nline2');
-  });
-});
+## Running Tests
+
+```bash
+# Run all unit tests once
+npm test
+
+# Run tests in watch mode during development
+npx vitest
 ```
 
-## High-Value Test Cases
-1. **Playlist Transition:** Ensure `Sequencer` emits `playback:started` precisely when the previous item ends.
-2. **Quota Handling:** Ensure `WebOSStorage` handles `localStorage` errors gracefully and doesn't crash the engine.
-3. **Event Bus Isolation:** Ensure events from one `Runtime` instance do not pollute another (especially important for the multi-player roadmaps).
+---
+
+## Roadmap & Future E2E Strategy
+
+1. **Playwright Integration**: Planned for End-to-End visual regression testing of the `VirtualPlayer` composite output (Layer 0 video + Layer 1 Shadow DOM).
+2. **Mock WebOS Luna Service**: Automated integration testing mocking webOS native `LS2Request` responses.

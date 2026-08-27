@@ -83,7 +83,8 @@ export class WebOSStorage {
         // In real B2B this would involve storageaccess/device/copy to sandbox then browser read
         // or a custom node service for direct read if available in the profile
         console.log(`[WebOSStorage] Reading ${request.path} from ${request.driveId}`);
-        return localStorage.getItem(`webos_file_${request.path}`) || null;
+        const item = localStorage.getItem(`webos_file_${request.path}`);
+        return item !== null ? item : null;
     }
 
     /**
