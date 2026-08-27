@@ -13,7 +13,7 @@ Signage Lab Platform provides a high-fidelity virtualized environment for design
 
 ---
 
-## 🚀 Key Capabilities
+## Key Capabilities
 
 - **Zero-Gap Dual Video Engine**: Slot-based (A/B) decoding pipeline eliminating black frames and transition latency on commercial displays.
 - **Layered Compositor**: Template overlays rendered inside an isolated `ShadowRoot` over hardware-accelerated video surfaces.
@@ -26,7 +26,7 @@ Signage Lab Platform provides a high-fidelity virtualized environment for design
 
 ---
 
-## 🏗️ Architecture Summary
+## Architecture Summary
 
 The repository is cleanly split into two decoupled subsystems:
 
@@ -48,7 +48,7 @@ For complete system design and data flow diagrams, refer to [ARCHITECTURE.md](./
 
 ---
 
-## 🚦 Quick Start
+## Quick Start
 
 ### Prerequisites
 - **Node.js**: v20.x or v22.x LTS
@@ -76,7 +76,7 @@ For complete system design and data flow diagrams, refer to [ARCHITECTURE.md](./
 
 ---
 
-## ⚙️ Environment Configuration
+## Environment Configuration
 
 Environment variables are documented in [`.env.example`](./.env.example):
 
@@ -87,7 +87,7 @@ Environment variables are documented in [`.env.example`](./.env.example):
 
 ---
 
-## 🧪 Quality Tooling & Automated Verification
+## Quality Tooling & Automated Verification
 
 The repository includes a comprehensive automated quality suite:
 
@@ -109,7 +109,7 @@ See [TESTING_DELTA.md](./TESTING_DELTA.md) for test coverage matrices and testin
 
 ---
 
-## 🔄 Continuous Integration
+## Continuous Integration
 
 Every pull request and push to `main` is validated via [GitHub Actions](./.github/workflows/ci.yml) across Node.js 20.x and 22.x LTS matrices:
 - Codebase type safety (`tsc --noEmit`)
@@ -118,19 +118,19 @@ Every pull request and push to `main` is validated via [GitHub Actions](./.githu
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please review [CONTRIBUTING.md](./CONTRIBUTING.md) for our pull request process, commit conventions, and development standards.
 
 ---
 
-## 🔒 Security
+## Security
 
 For vulnerability disclosures and security policies, please consult [SECURITY.md](./SECURITY.md).
 
 ---
 
-## 📜 Changelog
+## Changelog
 
 All notable changes are tracked in [CHANGELOG.md](./CHANGELOG.md) following Keep a Changelog conventions.
 
