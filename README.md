@@ -2,7 +2,7 @@
 
 > **High-Fidelity Edge Runtime Simulator & CMS Orchestrator for B2B Digital Signage.**
 
-[![CI Pipeline](https://github.com/signagelab/platform/actions/workflows/ci.yml/badge.svg)](https://github.com/signagelab/platform/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/benneberg/shadowframe2/actions/workflows/ci.yml/badge.svg)](https://github.com/benneberg/shadowframe2/platform/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg?logo=react)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF.svg?logo=vite)](https://vitejs.dev/)
