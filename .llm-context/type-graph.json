@@ -1,0 +1,157 @@
+{
+  "_meta": {
+    "generated": "2026-08-27 18:19 UTC",
+    "total_types": 15,
+    "note": "TypeScript type cross-reference. used_in lists files that explicitly import each type."
+  },
+  "types": {
+    "Device": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "components/Dashboard.tsx",
+        "components/DeviceRegistry.tsx",
+        "components/ProvisioningView.tsx",
+        "services/storage.ts"
+      ]
+    },
+    "Media": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "components/Dashboard.tsx",
+        "components/MediaLibrary.tsx",
+        "components/PlaylistBuilder.tsx",
+        "components/ProvisioningView.tsx",
+        "services/storage.ts"
+      ]
+    },
+    "MediaAsset": {
+      "defined_in": "engine/types/index.ts",
+      "kind": "interface",
+      "used_in": [
+        "engine/modules/AssetManager.ts",
+        "engine/modules/ShadowRenderer.ts"
+      ]
+    },
+    "PlayerConfig": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "components/Dashboard.tsx",
+        "components/ProvisioningView.tsx",
+        "components/VirtualPlayer.tsx",
+        "services/storage.ts"
+      ]
+    },
+    "PlayerRuntimeConfig": {
+      "defined_in": "engine/types/index.ts",
+      "kind": "interface",
+      "used_in": [
+        "components/VirtualPlayer.tsx",
+        "engine/core/Runtime.ts",
+        "engine/modules/Sequencer.ts"
+      ]
+    },
+    "Playlist": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "components/Dashboard.tsx",
+        "components/DeviceRegistry.tsx",
+        "components/PlaylistBuilder.tsx",
+        "components/ProvisioningView.tsx",
+        "engine/types/index.ts",
+        "services/storage.ts"
+      ]
+    },
+    "PlaylistItem": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "engine/modules/AssetManager.ts",
+        "engine/modules/PlaylistDiffEngine.ts",
+        "engine/modules/Sequencer.ts",
+        "engine/modules/ShadowRenderer.ts",
+        "engine/types/index.ts"
+      ]
+    },
+    "RuntimeEvent": {
+      "defined_in": "engine/types/index.ts",
+      "kind": "type",
+      "used_in": [
+        "engine/core/EventBus.ts",
+        "engine/modules/HardwareLoggingModule.ts"
+      ]
+    },
+    "ShadowState": {
+      "defined_in": "engine/types/index.ts",
+      "kind": "interface",
+      "used_in": []
+    },
+    "TelemetryEvent": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "components/DebugInspector.tsx",
+        "components/VirtualPlayer.tsx",
+        "engine/types/index.ts",
+        "services/storage.ts"
+      ]
+    },
+    "Template": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "components/PlaylistBuilder.tsx",
+        "components/ProvisioningView.tsx",
+        "components/TemplateLayoutPreview.tsx",
+        "components/TemplatesManager.tsx",
+        "engine/modules/ShadowRenderer.ts",
+        "engine/types/index.ts",
+        "services/storage.ts"
+      ]
+    },
+    "User": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "components/Dashboard.tsx",
+        "components/UserProfile.tsx",
+        "services/storage.ts"
+      ]
+    },
+    "ViewState": {
+      "defined_in": "types.ts",
+      "kind": "type",
+      "used_in": [
+        "App.tsx",
+        "components/Dashboard.tsx",
+        "components/DebugInspector.tsx",
+        "components/DeviceRegistry.tsx",
+        "components/HelpCenter.tsx",
+        "components/MediaLibrary.tsx",
+        "components/PlaylistBuilder.tsx",
+        "components/ProvisioningView.tsx",
+        "components/TemplatesManager.tsx",
+        "components/UserProfile.tsx",
+        "components/VirtualPlayer.tsx"
+      ]
+    },
+    "WebOSFileRequest": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "engine/modules/WebOSStorage.ts"
+      ]
+    },
+    "WebOSStorageProvider": {
+      "defined_in": "types.ts",
+      "kind": "interface",
+      "used_in": [
+        "components/DebugInspector.tsx",
+        "engine/modules/WebOSStorage.ts"
+      ]
+    }
+  }
+}

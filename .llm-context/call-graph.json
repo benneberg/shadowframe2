@@ -1,0 +1,165 @@
+{
+  "_meta": {
+    "generated": "2026-08-27 18:19 UTC",
+    "total_functions": 22,
+    "connected_functions": 18,
+    "depth": 2,
+    "note": "Shows which functions call which others (2-level depth). Only includes functions with at least one internal connection. Use with symbol-index.json to trace call paths."
+  },
+  "graph": {
+    "bootstrap": {
+      "file": "engine/core/Runtime.ts",
+      "line": 81,
+      "calls": [
+        "connect",
+        "init",
+        "preloadPlaylist",
+        "setConfig",
+        "start",
+        "updateReported"
+      ]
+    },
+    "cleanup": {
+      "file": "engine/modules/AssetManager.ts",
+      "line": 104,
+      "called_by": [
+        "destroy"
+      ]
+    },
+    "clear": {
+      "file": "engine/modules/ShadowRenderer.ts",
+      "line": 68,
+      "called_by": [
+        "stop"
+      ]
+    },
+    "connect": {
+      "file": "engine/shadow/DeviceShadowClient.ts",
+      "line": 25,
+      "called_by": [
+        "bootstrap"
+      ]
+    },
+    "constructor": {
+      "file": "engine/video/DualVideoEngine.ts",
+      "line": 9,
+      "calls": [
+        "init"
+      ]
+    },
+    "destroy": {
+      "file": "engine/core/Runtime.ts",
+      "line": 100,
+      "calls": [
+        "cleanup",
+        "disconnect",
+        "stop"
+      ],
+      "called_by": [
+        "if"
+      ]
+    },
+    "disconnect": {
+      "file": "engine/shadow/DeviceShadowClient.ts",
+      "line": 95,
+      "called_by": [
+        "destroy"
+      ]
+    },
+    "ensureAsset": {
+      "file": "engine/modules/AssetManager.ts",
+      "line": 69,
+      "calls": [
+        "store"
+      ],
+      "called_by": [
+        "for",
+        "preloadNext",
+        "preloadPlaylist"
+      ]
+    },
+    "for": {
+      "file": "engine/shadow/DeviceShadowClient.ts",
+      "line": 78,
+      "calls": [
+        "ensureAsset"
+      ]
+    },
+    "if": {
+      "file": "components/ProvisioningView.tsx",
+      "line": 59,
+      "calls": [
+        "destroy",
+        "setConfig"
+      ]
+    },
+    "init": {
+      "file": "engine/core/Runtime.ts",
+      "line": 35,
+      "calls": [
+        "start"
+      ],
+      "called_by": [
+        "bootstrap",
+        "constructor"
+      ]
+    },
+    "preloadNext": {
+      "file": "engine/modules/AssetManager.ts",
+      "line": 99,
+      "calls": [
+        "ensureAsset"
+      ]
+    },
+    "preloadPlaylist": {
+      "file": "engine/modules/AssetManager.ts",
+      "line": 117,
+      "calls": [
+        "ensureAsset"
+      ],
+      "called_by": [
+        "bootstrap"
+      ]
+    },
+    "setConfig": {
+      "file": "engine/modules/Sequencer.ts",
+      "line": 25,
+      "called_by": [
+        "bootstrap",
+        "if"
+      ]
+    },
+    "start": {
+      "file": "engine/core/HealthMonitor.ts",
+      "line": 7,
+      "called_by": [
+        "bootstrap",
+        "init"
+      ]
+    },
+    "stop": {
+      "file": "engine/video/DualVideoEngine.ts",
+      "line": 99,
+      "calls": [
+        "clear"
+      ],
+      "called_by": [
+        "destroy"
+      ]
+    },
+    "store": {
+      "file": "engine/modules/AssetManager.ts",
+      "line": 52,
+      "called_by": [
+        "ensureAsset"
+      ]
+    },
+    "updateReported": {
+      "file": "engine/shadow/DeviceShadowClient.ts",
+      "line": 89,
+      "called_by": [
+        "bootstrap"
+      ]
+    }
+  }
+}

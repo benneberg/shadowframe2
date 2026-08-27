@@ -1,0 +1,464 @@
+{
+  "_meta": {
+    "generated": "2026-08-27 18:19 UTC",
+    "total_files": 32,
+    "scored_files": 32,
+    "weights": {
+      "fan_in": 0.4,
+      "recency": 0.25,
+      "pattern_density": 0.25,
+      "size": 0.1
+    },
+    "note": "Files ranked by likelihood of needing edits when implementing a change. fan_in=centrality, recency=recent activity, pattern_density=business logic density, size=inverse file size."
+  },
+  "files": [
+    {
+      "path": "types.ts",
+      "score": 0.7438,
+      "imported_by_count": 25,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 1.0,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.938
+      },
+      "rank": 1
+    },
+    {
+      "path": "components/ui/Shared.tsx",
+      "score": 0.4986,
+      "imported_by_count": 10,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.4,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.886
+      },
+      "rank": 2
+    },
+    {
+      "path": "services/storage.ts",
+      "score": 0.4608,
+      "imported_by_count": 9,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.36,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.668
+      },
+      "rank": 3
+    },
+    {
+      "path": "engine/core/EventBus.ts",
+      "score": 0.4247,
+      "imported_by_count": 5,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.2,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.947
+      },
+      "rank": 4
+    },
+    {
+      "path": "engine/types/index.ts",
+      "score": 0.3943,
+      "imported_by_count": 3,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.12,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.963
+      },
+      "rank": 5
+    },
+    {
+      "path": "index.tsx",
+      "score": 0.3809,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.989
+      },
+      "rank": 6
+    },
+    {
+      "path": "engine/modules/WebOSStorage.ts",
+      "score": 0.3804,
+      "imported_by_count": 3,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.12,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.824
+      },
+      "rank": 7
+    },
+    {
+      "path": "engine/modules/ShadowRenderer.ts",
+      "score": 0.3748,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.928
+      },
+      "rank": 8
+    },
+    {
+      "path": "engine/video/DualVideoEngine.ts",
+      "score": 0.3721,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.901
+      },
+      "rank": 9
+    },
+    {
+      "path": "engine/modules/AssetManager.ts",
+      "score": 0.3678,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.858
+      },
+      "rank": 10
+    },
+    {
+      "path": "engine/modules/HardwareLoggingModule.ts",
+      "score": 0.366,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.84
+      },
+      "rank": 11
+    },
+    {
+      "path": "engine/modules/Bridge.ts",
+      "score": 0.3655,
+      "imported_by_count": 1,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.04,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.995
+      },
+      "rank": 12
+    },
+    {
+      "path": "engine/modules/PlaylistDiffEngine.ts",
+      "score": 0.3644,
+      "imported_by_count": 1,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.04,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.984
+      },
+      "rank": 13
+    },
+    {
+      "path": "engine/core/HealthMonitor.ts",
+      "score": 0.363,
+      "imported_by_count": 1,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.04,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.97
+      },
+      "rank": 14
+    },
+    {
+      "path": "engine/shadow/DeviceShadowClient.ts",
+      "score": 0.3563,
+      "imported_by_count": 1,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.04,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.903
+      },
+      "rank": 15
+    },
+    {
+      "path": "App.tsx",
+      "score": 0.3549,
+      "imported_by_count": 3,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.12,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.569
+      },
+      "rank": 16
+    },
+    {
+      "path": "engine/core/Runtime.ts",
+      "score": 0.3528,
+      "imported_by_count": 1,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.04,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.868
+      },
+      "rank": 17
+    },
+    {
+      "path": "engine/modules/Sequencer.ts",
+      "score": 0.3526,
+      "imported_by_count": 1,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.04,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.866
+      },
+      "rank": 18
+    },
+    {
+      "path": "postcss.config.js",
+      "score": 0.35,
+      "imported_by_count": 0,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.0,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 1.0
+      },
+      "rank": 19
+    },
+    {
+      "path": "vite.config.ts",
+      "score": 0.3481,
+      "imported_by_count": 0,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.0,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.981
+      },
+      "rank": 20
+    },
+    {
+      "path": "tailwind.config.js",
+      "score": 0.346,
+      "imported_by_count": 0,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.0,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.96
+      },
+      "rank": 21
+    },
+    {
+      "path": "components/TemplatesManager.tsx",
+      "score": 0.3431,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.611
+      },
+      "rank": 22
+    },
+    {
+      "path": "components/MediaLibrary.tsx",
+      "score": 0.3379,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.559
+      },
+      "rank": 23
+    },
+    {
+      "path": "components/UserProfile.tsx",
+      "score": 0.3344,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.524
+      },
+      "rank": 24
+    },
+    {
+      "path": "components/HelpCenter.tsx",
+      "score": 0.3339,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.519
+      },
+      "rank": 25
+    },
+    {
+      "path": "components/VirtualPlayer.tsx",
+      "score": 0.3301,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.481
+      },
+      "rank": 26
+    },
+    {
+      "path": "components/DeviceRegistry.tsx",
+      "score": 0.319,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.37
+      },
+      "rank": 27
+    },
+    {
+      "path": "components/DebugInspector.tsx",
+      "score": 0.3185,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.365
+      },
+      "rank": 28
+    },
+    {
+      "path": "components/Dashboard.tsx",
+      "score": 0.3134,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.314
+      },
+      "rank": 29
+    },
+    {
+      "path": "components/ProvisioningView.tsx",
+      "score": 0.3061,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.241
+      },
+      "rank": 30
+    },
+    {
+      "path": "components/TemplateLayoutPreview.tsx",
+      "score": 0.2992,
+      "imported_by_count": 1,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.04,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.332
+      },
+      "rank": 31
+    },
+    {
+      "path": "components/PlaylistBuilder.tsx",
+      "score": 0.282,
+      "imported_by_count": 2,
+      "days_since_modified": 0.0,
+      "pattern_hits": 0,
+      "factors": {
+        "fan_in": 0.08,
+        "recency": 0.5,
+        "pattern_density": 0.5,
+        "size": 0.0
+      },
+      "rank": 32
+    }
+  ]
+}

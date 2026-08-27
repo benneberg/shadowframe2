@@ -1,0 +1,40 @@
+{
+  "service": "applet",
+  "repository": null,
+  "exposes": {
+    "api": [],
+    "events": [],
+    "types": [
+      "Device",
+      "Media",
+      "MediaAsset",
+      "PlayerConfig",
+      "PlayerRuntimeConfig",
+      "Playlist",
+      "PlaylistItem",
+      "RuntimeEvent",
+      "ShadowState",
+      "TelemetryEvent",
+      "Template",
+      "User",
+      "ViewState",
+      "WebOSFileRequest",
+      "WebOSStorageProvider"
+    ]
+  },
+  "depends_on": {
+    "services": [],
+    "apis_consumed": [],
+    "databases": [],
+    "message_queues": [],
+    "external_apis": []
+  },
+  "tags": [
+    "frontend",
+    "javascript",
+    "services",
+    "typescript",
+    "ui"
+  ],
+  "detected_at": "2026-08-27 18:19 UTC"
+}

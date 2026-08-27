@@ -1,0 +1,218 @@
+{
+  "_meta": {
+    "generated": "2026-08-27 18:19 UTC",
+    "total_symbols": 42
+  },
+  "symbols": {
+    "Media": {
+      "file": "types.ts",
+      "line": 2,
+      "kind": "interface"
+    },
+    "Template": {
+      "file": "types.ts",
+      "line": 15,
+      "kind": "interface"
+    },
+    "PlaylistItem": {
+      "file": "types.ts",
+      "line": 24,
+      "kind": "interface"
+    },
+    "Playlist": {
+      "file": "types.ts",
+      "line": 31,
+      "kind": "interface"
+    },
+    "Device": {
+      "file": "types.ts",
+      "line": 39,
+      "kind": "interface"
+    },
+    "User": {
+      "file": "types.ts",
+      "line": 52,
+      "kind": "interface"
+    },
+    "PlayerConfig": {
+      "file": "types.ts",
+      "line": 60,
+      "kind": "interface"
+    },
+    "TelemetryEvent": {
+      "file": "types.ts",
+      "line": 67,
+      "kind": "interface"
+    },
+    "WebOSStorageProvider": {
+      "file": "types.ts",
+      "line": 76,
+      "kind": "interface"
+    },
+    "WebOSFileRequest": {
+      "file": "types.ts",
+      "line": 83,
+      "kind": "interface"
+    },
+    "ViewState": {
+      "file": "types.ts",
+      "line": 74,
+      "kind": "type"
+    },
+    "ShadowRenderer": {
+      "file": "engine/modules/ShadowRenderer.ts",
+      "line": 4,
+      "kind": "class"
+    },
+    "Sequencer": {
+      "file": "engine/modules/Sequencer.ts",
+      "line": 10,
+      "kind": "class"
+    },
+    "Bridge": {
+      "file": "engine/modules/Bridge.ts",
+      "line": 1,
+      "kind": "class"
+    },
+    "PlaylistDiffEngine": {
+      "file": "engine/modules/PlaylistDiffEngine.ts",
+      "line": 3,
+      "kind": "class"
+    },
+    "HardwareLoggingModule": {
+      "file": "engine/modules/HardwareLoggingModule.ts",
+      "line": 10,
+      "kind": "class"
+    },
+    "WebOSStorage": {
+      "file": "engine/modules/WebOSStorage.ts",
+      "line": 7,
+      "kind": "class"
+    },
+    "AssetManager": {
+      "file": "engine/modules/AssetManager.ts",
+      "line": 6,
+      "kind": "class"
+    },
+    "MediaAsset": {
+      "file": "engine/types/index.ts",
+      "line": 6,
+      "kind": "interface"
+    },
+    "ShadowState": {
+      "file": "engine/shadow/DeviceShadowClient.ts",
+      "line": 4,
+      "kind": "interface"
+    },
+    "PlayerRuntimeConfig": {
+      "file": "engine/types/index.ts",
+      "line": 30,
+      "kind": "interface"
+    },
+    "RuntimeEvent": {
+      "file": "engine/types/index.ts",
+      "line": 36,
+      "kind": "type"
+    },
+    "DeviceShadowClient": {
+      "file": "engine/shadow/DeviceShadowClient.ts",
+      "line": 15,
+      "kind": "class"
+    },
+    "ShadowMessage": {
+      "file": "engine/shadow/DeviceShadowClient.ts",
+      "line": 9,
+      "kind": "interface"
+    },
+    "Runtime": {
+      "file": "engine/core/Runtime.ts",
+      "line": 13,
+      "kind": "class"
+    },
+    "EventBus": {
+      "file": "engine/core/EventBus.ts",
+      "line": 6,
+      "kind": "class"
+    },
+    "HealthMonitor": {
+      "file": "engine/core/HealthMonitor.ts",
+      "line": 1,
+      "kind": "class"
+    },
+    "DualVideoEngine": {
+      "file": "engine/video/DualVideoEngine.ts",
+      "line": 4,
+      "kind": "class"
+    },
+    "VideoSlot": {
+      "file": "engine/video/DualVideoEngine.ts",
+      "line": 2,
+      "kind": "type"
+    },
+    "FAQItem": {
+      "file": "components/HelpCenter.tsx",
+      "line": 24,
+      "kind": "interface"
+    },
+    "HelpCenterProps": {
+      "file": "components/HelpCenter.tsx",
+      "line": 79,
+      "kind": "interface"
+    },
+    "MediaLibraryProps": {
+      "file": "components/MediaLibrary.tsx",
+      "line": 21,
+      "kind": "interface"
+    },
+    "UserProfileProps": {
+      "file": "components/UserProfile.tsx",
+      "line": 21,
+      "kind": "interface"
+    },
+    "DeviceRegistryProps": {
+      "file": "components/DeviceRegistry.tsx",
+      "line": 30,
+      "kind": "interface"
+    },
+    "DebugInspectorProps": {
+      "file": "components/DebugInspector.tsx",
+      "line": 29,
+      "kind": "interface"
+    },
+    "VirtualPlayerProps": {
+      "file": "components/VirtualPlayer.tsx",
+      "line": 23,
+      "kind": "interface"
+    },
+    "TemplatesManagerProps": {
+      "file": "components/TemplatesManager.tsx",
+      "line": 25,
+      "kind": "interface"
+    },
+    "PlaylistBuilderProps": {
+      "file": "components/PlaylistBuilder.tsx",
+      "line": 42,
+      "kind": "interface"
+    },
+    "SortableMediaItemProps": {
+      "file": "components/PlaylistBuilder.tsx",
+      "line": 46,
+      "kind": "interface"
+    },
+    "DashboardProps": {
+      "file": "components/Dashboard.tsx",
+      "line": 30,
+      "kind": "interface"
+    },
+    "TemplateLayoutPreviewProps": {
+      "file": "components/TemplateLayoutPreview.tsx",
+      "line": 5,
+      "kind": "interface"
+    },
+    "ProvisioningViewProps": {
+      "file": "components/ProvisioningView.tsx",
+      "line": 28,
+      "kind": "interface"
+    }
+  }
+}

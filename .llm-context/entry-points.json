@@ -1,0 +1,8 @@
+{
+  "main_files": [
+    "engine/types/index.ts"
+  ],
+  "server_files": [],
+  "cli_files": [],
+  "test_suites": []
+}
