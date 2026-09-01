@@ -1,7 +1,7 @@
 {
-  "name": "signage-lab-platform-v0",
+  "name": "ShadowFrame - Signage Lab Platform",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
