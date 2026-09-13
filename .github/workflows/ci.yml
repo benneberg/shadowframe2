@@ -1,10 +1,11 @@
-name: CI & GitHub Pages Deployment
+name: "CI & GitHub Pages Deployment"
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,12 +13,10 @@ concurrency:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
   validate:
-    name: Lint, Test & Build
+    name: "Lint, Test & Build"
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +35,7 @@ jobs:
       - name: TypeScript check
         run: npm run lint
 
-      - name: Run unit & integration tests
+      - name: "Run unit & integration tests"
         run: npm test
 
       - name: Install Playwright browsers
@@ -63,6 +62,10 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: validate
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
