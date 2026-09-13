@@ -20,8 +20,8 @@ export default defineConfig({
   ],
   webServer: process.env.PLAYWRIGHT_NO_SERVER ? undefined : {
     command: 'npm run preview -- --port 3000 --host 0.0.0.0',
-    port: 3000,
-    reuseExistingServer: true,
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
     timeout: 30000,
   },
 });
