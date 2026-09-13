@@ -5,12 +5,14 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   test: {
+    environment: 'jsdom',
+    include: ['tests/unit/**/*.test.ts'],
     setupFiles: ['./tests/setup.ts'],
     globals: true,
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '.'),
+      '@': path.resolve(import.meta.dirname || '.', '.'),
     },
   },
 });

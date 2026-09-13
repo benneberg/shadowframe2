@@ -226,7 +226,7 @@ const PlaylistBuilder: React.FC<PlaylistBuilderProps> = ({ onNavigate }) => {
                         <div className="flex items-center gap-6 mt-6 pt-6 border-t border-white/5">
                             <div className="flex items-center gap-3">
                                 <Box className="w-4 h-4 text-slate-700" />
-                                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{pl.items.length} Modules</span>
+                                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{pl.items?.length || 0} Modules</span>
                             </div>
                              <div className="flex items-center gap-3">
                                 <LayoutTemplate className="w-4 h-4 text-slate-700" />
@@ -442,7 +442,7 @@ const PlaylistBuilder: React.FC<PlaylistBuilderProps> = ({ onNavigate }) => {
 
                     <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {previewPlaylist.items.map((item, idx) => (
+                            {(previewPlaylist.items || []).map((item, idx) => (
                                 <div key={idx} className="group relative aspect-video rounded-2xl overflow-hidden border border-white/5 bg-black/40">
                                     <img 
                                         src={item.url} 
@@ -468,11 +468,11 @@ const PlaylistBuilder: React.FC<PlaylistBuilderProps> = ({ onNavigate }) => {
                         <div className="flex gap-10">
                             <div className="flex flex-col gap-1">
                                 <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">TOTAL_RUNTIME</span>
-                                <span className="text-sm font-black text-primary font-mono">{previewPlaylist.items.reduce((acc, i) => acc + i.duration, 0)}S</span>
+                                <span className="text-sm font-black text-primary font-mono">{(previewPlaylist.items || []).reduce((acc, i) => acc + (i.duration || 0), 0)}S</span>
                             </div>
                             <div className="flex flex-col gap-1">
                                 <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">MODULE_COUNT</span>
-                                <span className="text-sm font-black text-foreground font-mono">{previewPlaylist.items.length} UNITS</span>
+                                <span className="text-sm font-black text-foreground font-mono">{previewPlaylist.items?.length || 0} UNITS</span>
                             </div>
                         </div>
                         <button 

@@ -2,12 +2,16 @@
 
 > **High-Fidelity Edge Runtime Simulator & CMS Orchestrator for B2B Digital Signage.**
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-benneberg.github.io%2Fshadowframe2-00ffc6?style=for-the-badge&logo=google-chrome&logoColor=black)](https://benneberg.github.io/shadowframe2/)
 [![CI Pipeline](https://github.com/benneberg/shadowframe2/actions/workflows/ci.yml/badge.svg)](https://github.com/benneberg/shadowframe2/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg?logo=react)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF.svg?logo=vite)](https://vitejs.dev/)
 [![Vitest](https://img.shields.io/badge/Vitest-Tested-729B1B.svg?logo=vitest)](https://vitest.dev/)
+[![Playwright](https://img.shields.io/badge/Playwright-E2E%20Tested-45ba4b.svg?logo=playwright)](https://playwright.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+🌐 **Public Live Demo:** [https://benneberg.github.io/shadowframe2/](https://benneberg.github.io/shadowframe2/) *(Instant one-click interactive preview hosted on GitHub Pages)*
 
 Signage Lab Platform provides a high-fidelity virtualized environment for designing, testing, and debugging enterprise Digital Signage applications. It simulates the hardware constraints, storage systems, and kernel behaviors of commercial signage displays (LG webOS and Samsung Tizen), enabling rapid iteration and remote diagnostics without physical hardware.
 
@@ -89,19 +93,22 @@ Environment variables are documented in [`.env.example`](./.env.example):
 
 ## Quality Tooling & Automated Verification
 
-The repository includes a comprehensive automated quality suite:
+The repository includes a comprehensive automated quality and verification suite:
 
 ```bash
 # Type check and lint codebase
 npm run lint
 
-# Run automated Vitest test suite (18 unit tests)
+# Run automated Vitest unit & integration test suite (22 tests)
 npm test
 
-# Run tests in interactive watch mode
+# Run Playwright End-to-End smoke tests (5 browser automation tests)
+npm run test:e2e
+
+# Run unit tests in interactive watch mode
 npx vitest
 
-# Compile production bundle
+# Compile production bundle with Rollup manualChunks code splitting
 npm run build
 ```
 
@@ -109,12 +116,14 @@ See [TESTING_DELTA.md](./TESTING_DELTA.md) for test coverage matrices and testin
 
 ---
 
-## Continuous Integration
+## Continuous Integration & CD Deployment
 
-Every pull request and push to `main` is validated via [GitHub Actions](./.github/workflows/ci.yml) across Node.js 20.x and 22.x LTS matrices:
-- Codebase type safety (`tsc --noEmit`)
-- Unit test execution (`vitest run`)
-- Production bundle compilation (`vite build`)
+Every pull request and push to `main` is validated and automatically deployed via [GitHub Actions](./.github/workflows/ci.yml) on Node.js 22 LTS:
+1. **Type Safety Verification**: Strict TypeScript type checking (`tsc --noEmit`).
+2. **Unit & Integration Testing**: Vitest suite covering edge storage bridges, hardware logging, and zero-gap player sequencer.
+3. **End-to-End Testing**: Playwright headless browser smoke tests validating virtual viewport rendering, Shadow DOM template overlays, and layout sandbox toggling.
+4. **Optimized Production Build**: Vite/Rollup production build with granular chunk splitting (`vendor-react`, `vendor-motion`, `vendor-dnd`, `vendor-icons`, `vendor-utils`).
+5. **Automated GitHub Pages Deployment**: Seamless zero-config deployment to [https://benneberg.github.io/shadowframe2/](https://benneberg.github.io/shadowframe2/) using official `actions/deploy-pages`.
 
 ---
 

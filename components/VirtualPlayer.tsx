@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { storage } from '../services/storage';
-import { ViewState, PlayerConfig, TelemetryEvent } from '../types';
+import { ViewState, PlayerConfig, TelemetryEvent, Playlist } from '../types';
 import { Runtime } from '../engine/core/Runtime';
 import { PlayerRuntimeConfig } from '../engine/types';
 import { eventBus } from '../engine/core/EventBus';
@@ -34,7 +34,39 @@ const VirtualPlayer: React.FC<VirtualPlayerProps> = ({ onNavigate }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const availableConfigs = storage.getConfigs();
+    let availableConfigs = storage.getConfigs();
+    if (availableConfigs.length === 0) {
+      const templates = storage.getTemplates();
+      const defaultPlaylist: Playlist = {
+        playlistId: 'pl-default',
+        name: 'Main Broadcast Cycle',
+        templateId: templates[0]?.templateId || 'temp-001',
+        createdAt: new Date().toISOString(),
+        items: [
+          {
+            mediaId: 'media-01',
+            duration: 10,
+            type: 'video',
+            url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+          }
+        ]
+      };
+      availableConfigs = [
+        {
+          playerId: 'node-01',
+          playlist: defaultPlaylist,
+          template: templates[0],
+          lastProvisioned: new Date().toISOString()
+        },
+        {
+          playerId: 'node-02-flagship',
+          playlist: defaultPlaylist,
+          template: templates[1] || templates[0],
+          lastProvisioned: new Date().toISOString()
+        }
+      ];
+      storage.saveConfigs(availableConfigs);
+    }
     setConfigs(availableConfigs);
     if (availableConfigs.length > 0) {
       setSelectedConfigId(availableConfigs[0].playerId);

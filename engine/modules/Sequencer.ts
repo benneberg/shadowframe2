@@ -25,13 +25,15 @@ export class Sequencer {
 
   setConfig(config: PlayerRuntimeConfig) {
     if (this.config) {
-      const diffs = PlaylistDiffEngine.diff(this.config.playlist.items, config.playlist.items);
+      const oldItems = this.config.playlist?.items || [];
+      const newItems = config.playlist?.items || [];
+      const diffs = PlaylistDiffEngine.diff(oldItems, newItems);
       if (diffs.length === 0) return;
 
       console.log(`[Sequencer] Applying playlist diff: ${diffs.length} changes detected.`);
       
-      const currentMediaId = this.config.playlist.items[this.currentIndex]?.mediaId;
-      const newIndex = config.playlist.items.findIndex(item => item.mediaId === currentMediaId);
+      const currentMediaId = oldItems[this.currentIndex]?.mediaId;
+      const newIndex = newItems.findIndex(item => item.mediaId === currentMediaId);
       
       this.config = config;
       if (newIndex !== -1) {
@@ -48,7 +50,7 @@ export class Sequencer {
   }
 
   async start() {
-    if (!this.config || this.config.playlist.items.length === 0) return;
+    if (!this.config || !this.config.playlist || !this.config.playlist.items || this.config.playlist.items.length === 0) return;
     this.isRunning = true;
     this.lastTick = performance.now();
     console.log('[Sequencer] Starting deterministic playback engine...');
@@ -63,10 +65,13 @@ export class Sequencer {
   }
 
   private async playNext() {
-    if (!this.isRunning || !this.config) return;
+    if (!this.isRunning || !this.config || !this.config.playlist) return;
 
-    const currentItem = this.config.playlist.items[this.currentIndex];
-    const nextItem = this.config.playlist.items[(this.currentIndex + 1) % this.config.playlist.items.length];
+    const items = this.config.playlist.items || [];
+    if (items.length === 0) return;
+
+    const currentItem = items[this.currentIndex % items.length];
+    const nextItem = items[(this.currentIndex + 1) % items.length];
 
     console.log(`[Sequencer] Executing: ${currentItem.mediaId} (${currentItem.type})`);
     
@@ -77,8 +82,8 @@ export class Sequencer {
     this.renderer.renderTemplate(
       this.config.template, 
       currentItem, 
-      this.config.playlist.name, 
-      this.config.playerId
+      this.config.playlist?.name || 'PLAYLIST', 
+      this.config.playerId || 'NODE'
     );
 
     // 3. Handle Video Playback (Layer 0)

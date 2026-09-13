@@ -164,7 +164,7 @@ const DeviceRegistry: React.FC<DeviceRegistryProps> = ({ onNavigate }) => {
                                 className="w-full p-6 bg-white/5 border border-white/5 rounded-2xl hover:border-primary/30 hover:bg-primary/5 text-left group transition-all"
                             >
                                 <p className="text-[11px] font-black text-foreground uppercase tracking-widest group-hover:text-primary mb-1">{pl.name}</p>
-                                <p className="text-[9px] font-mono text-slate-600 uppercase italic">{pl.items.length} MODULES DETECTED</p>
+                                <p className="text-[9px] font-mono text-slate-600 uppercase italic">{pl.items?.length || 0} MODULES DETECTED</p>
                             </button>
                         ))}
                     </div>

@@ -100,31 +100,35 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [alerts, setAlerts] = useState<{id: string, message: string}[]>([]);
 
   useEffect(() => {
-    const devices = storage.getDevices();
-    const media = storage.getMedia();
-    const playlists = storage.getPlaylists();
-    const configs = storage.getConfigs();
+    const devices = storage.getDevices() || [];
+    const media = storage.getMedia() || [];
+    const playlists = storage.getPlaylists() || [];
+    const configs = storage.getConfigs() || [];
     
     setData({ media, devices, playlists, configs });
 
     // Identify offline devices for toast 
     const offlineDeads = devices.filter(d => {
+        if (!d?.lastSeen) return false;
         const lastSeen = new Date(d.lastSeen).getTime();
+        if (isNaN(lastSeen)) return false;
         const diffMins = (Date.now() - lastSeen) / 1000 / 60;
         return diffMins > 30;
     });
 
     if (offlineDeads.length > 0) {
         setAlerts(offlineDeads.map(d => ({
-            id: d.deviceId,
-            message: `NODE_OFFLINE: ${d.name} has lost communication link.`
+            id: d.deviceId || String(Math.random()),
+            message: `NODE_OFFLINE: ${d.name || d.deviceId || 'Node'} has lost communication link.`
         })));
     }
 
     const calculateStatus = () => {
       const now = new Date().getTime();
       const counts = devices.reduce((acc, dev) => {
+        if (!dev?.lastSeen) return acc;
         const lastSeen = new Date(dev.lastSeen).getTime();
+        if (isNaN(lastSeen)) return acc;
         const diffMins = (now - lastSeen) / 1000 / 60;
         
         if (diffMins < 5) acc.online++;
@@ -311,42 +315,48 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">ACTIVE_DEPLOYMENTS</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {data.configs.length > 0 ? data.configs.map(cfg => (
-              <GlowCard key={cfg.playerId} className="p-6 flex items-center gap-6 border-white/5 hover:bg-white/5 transition-all group">
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20 shadow-glow-cyan group-hover:scale-105 transition-transform duration-500">
-                  <Monitor className="w-8 h-8" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-sm font-black text-foreground truncate uppercase tracking-tighter">{cfg.playlist.name}</h3>
-                    <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-glow-cyan" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-primary italic">EXECUTING</span>
+            {data.configs && data.configs.length > 0 ? data.configs.filter(Boolean).map(cfg => {
+              const playlistName = cfg.playlist?.name || 'MAIN BROADCAST CYCLE';
+              const moduleCount = cfg.playlist?.items?.length ?? 0;
+              const playerId = cfg.playerId || 'NODE-01';
+
+              return (
+                <GlowCard key={playerId} className="p-6 flex items-center gap-6 border-white/5 hover:bg-white/5 transition-all group">
+                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20 shadow-glow-cyan group-hover:scale-105 transition-transform duration-500">
+                    <Monitor className="w-8 h-8" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-sm font-black text-foreground truncate uppercase tracking-tighter">{playlistName}</h3>
+                      <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-glow-cyan" />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-primary italic">EXECUTING</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-5 mt-2">
+                       <p className="text-[10px] text-slate-600 flex items-center gap-2 font-mono">
+                        <Cpu className="w-3.5 h-3.5 opacity-50" /> {playerId.toUpperCase()}
+                      </p>
+                      <p className="text-[10px] text-slate-600 flex items-center gap-2 font-mono">
+                        <Layout className="w-3.5 h-3.5 opacity-50" /> {moduleCount} MODULES
+                      </p>
+                    </div>
+                    <div className="w-full h-1 bg-white/5 rounded-full mt-5 overflow-hidden">
+                      <div 
+                        className="h-full bg-primary rounded-full transition-all duration-1000 shadow-glow-cyan" 
+                        style={{ width: '65%' }}
+                      />
                     </div>
                   </div>
-                  <div className="flex items-center gap-5 mt-2">
-                     <p className="text-[10px] text-slate-600 flex items-center gap-2 font-mono">
-                      <Cpu className="w-3.5 h-3.5 opacity-50" /> {cfg.playerId.toUpperCase()}
-                    </p>
-                    <p className="text-[10px] text-slate-600 flex items-center gap-2 font-mono">
-                      <Layout className="w-3.5 h-3.5 opacity-50" /> {cfg.playlist.items.length} MODULES
-                    </p>
-                  </div>
-                  <div className="w-full h-1 bg-white/5 rounded-full mt-5 overflow-hidden">
-                    <div 
-                      className="h-full bg-primary rounded-full transition-all duration-1000 shadow-glow-cyan" 
-                      style={{ width: '65%' }}
-                    />
-                  </div>
-                </div>
-                <button 
-                  onClick={() => onNavigate('player')}
-                  className="p-4 bg-white/5 rounded-2xl text-slate-600 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-              </GlowCard>
-            )) : (
+                  <button 
+                    onClick={() => onNavigate('player')}
+                    className="p-4 bg-white/5 rounded-2xl text-slate-600 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                </GlowCard>
+              );
+            }) : (
               <GlowCard className="col-span-full p-12 py-20 border-dashed text-center group cursor-pointer hover:bg-white/5 transition-all">
                 <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:bg-primary/10 transition-all">
                    <Zap className="w-10 h-10 text-slate-800 group-hover:text-primary transition-all opacity-20 group-hover:opacity-100" />

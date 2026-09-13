@@ -67,4 +67,22 @@ describe('CMS Storage Service', () => {
     storage.clearTelemetry();
     expect(storage.getTelemetry()).toHaveLength(0);
   });
+
+  it('safely handles and heals configs with missing playlist', () => {
+    // Simulate legacy or malformed configs stored in localStorage
+    localStorage.setItem('signage_configs', JSON.stringify([
+      {
+        playerId: 'node-legacy',
+        assignedPlaylistId: 'pl-default',
+        syncInterval: 30
+      }
+    ]));
+
+    const configs = storage.getConfigs();
+    expect(configs).toHaveLength(1);
+    expect(configs[0].playerId).toBe('node-legacy');
+    expect(configs[0].playlist).toBeDefined();
+    expect(configs[0].playlist.name).toBeDefined();
+    expect(Array.isArray(configs[0].playlist.items)).toBe(true);
+  });
 });

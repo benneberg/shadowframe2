@@ -138,7 +138,22 @@ export const storage = {
     return newList;
   },
 
-  getPlaylists: (): Playlist[] => JSON.parse(localStorage.getItem(KEYS.PLAYLISTS) || '[]'),
+  getPlaylists: (): Playlist[] => {
+    try {
+      const data = localStorage.getItem(KEYS.PLAYLISTS);
+      const parsed = data ? JSON.parse(data) : [];
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((p: any) => ({
+        playlistId: p?.playlistId || 'pl-default',
+        name: p?.name || 'Main Broadcast Cycle',
+        templateId: p?.templateId || 'temp-001',
+        createdAt: p?.createdAt || new Date().toISOString(),
+        items: Array.isArray(p?.items) ? p.items : []
+      }));
+    } catch {
+      return [];
+    }
+  },
   savePlaylists: (playlists: Playlist[]) => localStorage.setItem(KEYS.PLAYLISTS, JSON.stringify(playlists)),
   savePlaylist: (playlist: Playlist): Playlist[] => {
     const list = storage.getPlaylists();
@@ -147,7 +162,14 @@ export const storage = {
     return newList;
   },
 
-  getDevices: (): Device[] => JSON.parse(localStorage.getItem(KEYS.DEVICES) || '[]'),
+  getDevices: (): Device[] => {
+    try {
+      const data = localStorage.getItem(KEYS.DEVICES);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  },
   saveDevices: (devices: Device[]) => localStorage.setItem(KEYS.DEVICES, JSON.stringify(devices)),
   saveDevice: (device: Device): Device[] => {
     const list = storage.getDevices();
@@ -162,7 +184,73 @@ export const storage = {
     return newList;
   },
 
-  getConfigs: (): PlayerConfig[] => JSON.parse(localStorage.getItem(KEYS.CONFIGS) || '[]'),
+  getConfigs: (): PlayerConfig[] => {
+    try {
+      const raw = localStorage.getItem(KEYS.CONFIGS);
+      const templates = storage.getTemplates();
+      const playlists = storage.getPlaylists();
+
+      const defaultPlaylist: Playlist = playlists[0] || {
+        playlistId: 'pl-default',
+        name: 'Main Broadcast Cycle',
+        templateId: templates[0]?.templateId || 'temp-001',
+        createdAt: new Date().toISOString(),
+        items: [
+          {
+            mediaId: 'media-01',
+            duration: 10,
+            type: 'video',
+            url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+          }
+        ]
+      };
+
+      if (!raw) {
+        return [];
+      }
+
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        return [];
+      }
+
+      let modified = false;
+      const sanitized: PlayerConfig[] = parsed.filter(Boolean).map((c: any) => {
+        let playlist = c.playlist;
+        if (!playlist || typeof playlist !== 'object' || !playlist.name) {
+          modified = true;
+          const matched = playlists.find(p => p.playlistId === c.assignedPlaylistId || p.playlistId === c.playlistId);
+          playlist = matched ? { ...matched } : { ...defaultPlaylist };
+        }
+        if (!Array.isArray(playlist.items)) {
+          modified = true;
+          playlist.items = defaultPlaylist.items;
+        }
+
+        let template = c.template;
+        if (!template || typeof template !== 'object' || !template.templateId) {
+          modified = true;
+          template = templates[0];
+        }
+
+        return {
+          playerId: c.playerId || 'node-01',
+          playlist,
+          template,
+          lastProvisioned: c.lastProvisioned || c.lastSync || new Date().toISOString()
+        };
+      });
+
+      if (modified) {
+        localStorage.setItem(KEYS.CONFIGS, JSON.stringify(sanitized));
+      }
+
+      return sanitized;
+    } catch (e) {
+      console.error('Failed to parse player configs', e);
+      return [];
+    }
+  },
   saveConfigs: (configs: PlayerConfig[]) => localStorage.setItem(KEYS.CONFIGS, JSON.stringify(configs)),
   saveConfig: (config: PlayerConfig): PlayerConfig[] => {
     const list = storage.getConfigs();
