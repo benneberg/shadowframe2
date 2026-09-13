@@ -1,6 +1,6 @@
 # Signage Lab Platform v3
 
-> **High-Fidelity Edge Runtime Simulator & CMS Orchestrator for B2B Digital Signage.**
+> **A High-Fidelity Edge Runtime Simulator & CMS Orchestrator for B2B Digital Signage.**
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-benneberg.github.io%2Fshadowframe2-00ffc6?style=for-the-badge&logo=google-chrome&logoColor=black)](https://benneberg.github.io/shadowframe2/)
 [![CI Pipeline](https://github.com/benneberg/shadowframe2/actions/workflows/ci.yml/badge.svg)](https://github.com/benneberg/shadowframe2/actions/workflows/ci.yml)
